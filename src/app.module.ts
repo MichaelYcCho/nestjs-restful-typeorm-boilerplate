@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeORMConfig } from '@config/typeorm.config';
+import { DataSource } from 'typeorm';
 
 @Module({
   imports: [
@@ -24,6 +25,9 @@ import { typeORMConfig } from '@config/typeorm.config';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) =>
         typeORMConfig(configService),
+      dataSourceFactory: async (options) => {
+        return await new DataSource(options).initialize();
+      },
     }),
   ],
   controllers: [AppController],

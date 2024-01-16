@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { User } from 'src/users/entities/user.entity';
 
 dotenv.config({ path: `./env/.env.${process.env.NODE_ENV || 'dev'}` });
 
@@ -14,7 +15,7 @@ export function config(): DataSourceOptions {
     database: configService.get<string>('DB_NAME'),
     username: configService.get<string>('DB_USERNAME'),
     password: configService.get<string>('DB_PASSWORD'),
-    entities: [],
+    entities: [User],
     migrations: ['./src/database/migrations/**/*{.ts,.js}'],
     migrationsTableName: 'migration_type_orm',
     logging: true,

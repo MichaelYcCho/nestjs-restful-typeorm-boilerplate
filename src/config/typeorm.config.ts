@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 export function typeORMConfig(
   configService: ConfigService,
@@ -11,7 +12,7 @@ export function typeORMConfig(
     database: configService.get<string>('DB_NAME'),
     username: configService.get<string>('DB_USERNAME'),
     password: configService.get<string>('DB_PASSWORD'),
-    entities: [],
+    entities: [User],
     logging: true,
     autoLoadEntities: true,
     synchronize: configService.get<boolean>('DB_SYNCHRONIZE'),

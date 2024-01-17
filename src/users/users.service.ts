@@ -5,7 +5,7 @@ import { bcryptHashing } from '@core/utils/hashing'
 import { UserRepository } from './user.repository'
 import { createUserRequest } from './dtos/create-user.dto'
 import { ExceptionHandler } from '@core/errors/error.handler'
-import { CoreResponse } from '@core/dtos/response.dto'
+import { BaseResponse } from '@core/dtos/response.dto'
 
 @Injectable()
 export class UserService {
@@ -14,7 +14,7 @@ export class UserService {
         private userRepository: UserRepository,
     ) {}
 
-    async createUser({ email, password, profileName }: createUserRequest): Promise<CoreResponse> {
+    async createUser({ email, password, profileName }: createUserRequest): Promise<BaseResponse> {
         try {
             const existUser = await this.userRepository.getUserByEmail(email)
             if (existUser) {

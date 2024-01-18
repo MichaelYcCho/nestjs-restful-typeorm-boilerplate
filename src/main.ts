@@ -1,4 +1,4 @@
-import * as basicAuth from 'express-basic-auth'
+import basicAuth from 'express-basic-auth'
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { GlobalExceptionsFilter } from '@core/errors/exception.filter'

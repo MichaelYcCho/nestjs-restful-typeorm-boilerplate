@@ -19,4 +19,9 @@ export const USERS_ERRORS = {
         status: 400,
         message: 'failed get user profile',
     },
+    FAILED_UPDATE_USER: {
+        errorCode: 100005,
+        status: 400,
+        message: 'failed update user',
+    },
 }

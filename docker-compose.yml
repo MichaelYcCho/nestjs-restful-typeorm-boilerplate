@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+    boilerplate:
+        build:
+            context: .
+            dockerfile: Dockerfile
+            args:
+                NODE_ENV: ${NODE_ENV}
+        image: boilerplate:0.1
+        ports:
+            - '3000:3000'
+        volumes:
+            - ~/Documents/logs/pm2:/app/logs/pm2
+        environment:
+            - NODE_ENV=${NODE_ENV}

@@ -16,6 +16,8 @@
         "db:generate": "read -p \"Migration Name(No Blank) : \" file_name && npm run typeorm -- migration:generate src/database/migrations/$file_name -d ./src/config/datasource.ts",
         "db:migrate": "npm run typeorm -- migration:run -d src/config/datasource.ts",
         "db:revert": "npm run typeorm -- migration:revert -d src/config/datasource.ts",
+        "docker:typeorm": "ts-node /app/boilerplate/node_modules/typeorm/cli.js",
+        "docker:db:migrate": "npm run docker:typeorm -- migration:run -d /app/boilerplate/dist/config/datasource.js",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "test": "cross-env NODE_ENV=test  jest",
         "test:watch": "jest --watch",

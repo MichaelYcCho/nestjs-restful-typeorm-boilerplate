@@ -10,7 +10,7 @@ import { User } from '@users/entities/user.entity'
 
 import { JwtStorageRepository } from '@auth/repository/auth.repository'
 import { TokenPayload } from '@auth/auth_type'
-import { UserRepository } from '@users/user.repository'
+import { UserRepository } from '@users/repository/user.repository'
 import { AccessTokenResponse, RefreshTokenRequest, TokenResponse } from '@auth/dtos/jwt.dto'
 
 @Injectable()

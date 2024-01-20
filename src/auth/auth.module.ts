@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UsersModule } from '@users/users.module'
 import { JwtModule } from '@nestjs/jwt'
 import { AuthController } from './controllers/auth.controller'
-import { UserRepository } from '@users/user.repository'
+import { UserRepository } from '@users/repository/user.repository'
 import { AuthService } from './services/auth.service'
 import { JwtStorageRepository } from './repository/auth.repository'
 

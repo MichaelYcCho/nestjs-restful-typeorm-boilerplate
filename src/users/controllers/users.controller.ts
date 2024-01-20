@@ -1,11 +1,13 @@
-import { Body, Controller, Patch, Post, Req, Version } from '@nestjs/common'
-import { UserService } from './users.service'
-import { UserResponse, createUserRequest, updateUserRequest } from './dtos/user.dto'
+import { Body, Controller, Patch, Post, UseGuards, Version } from '@nestjs/common'
+import { UserService } from '../services/users.service'
+import { UserResponse, createUserRequest, updateUserRequest } from '../dtos/user.dto'
 import { plainToInstance } from 'class-transformer'
 import { BaseResponse } from '@core/dtos/response.dto'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
+import { JwtAuthGuard } from '@auth/guards/jwt.access.guard'
+import { getUser } from '@core/decorators/getUser.decorator'
 
 @ApiTags('Users')
 @Controller('users')
@@ -27,6 +29,7 @@ export class UserController {
         return response
     }
 
+    @UseGuards(JwtAuthGuard)
     @Version('1')
     @ApiOperation({ summary: 'UpdateUser' })
     @ApiResponse({
@@ -36,7 +39,7 @@ export class UserController {
     })
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
     @Patch('/update')
-    async updateUser(@Body() data: updateUserRequest): Promise<UserResponse> {
+    async updateUser(@getUser() user, @Body() data: updateUserRequest): Promise<UserResponse> {
         const result = await this.usersService.updateUser(data)
         const response = plainToInstance(UserResponse, result)
         return response

@@ -1,8 +1,8 @@
 import { IsBoolean, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator'
-
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, Index, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm'
 import { DB_SCHEMA, USER_PREFIX, UserRole } from '@core/utils/constant'
 import { TimeStamp } from '@core/entities/time-stamp.entity'
+import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 
 @Index('email', ['email'], { unique: true })
 @Entity({ schema: DB_SCHEMA, name: `${USER_PREFIX}_user` })
@@ -30,4 +30,7 @@ export class User extends TimeStamp {
     @IsBoolean()
     @Column('boolean', { name: 'is_active', default: true })
     isActive: boolean
+
+    @OneToOne(() => JwtStorage, (jwtStorage) => jwtStorage.user)
+    jwtStorage: Relation<JwtStorage>
 }

@@ -1,12 +1,12 @@
 import * as Joi from 'joi'
 import { Module } from '@nestjs/common'
 import { AppController } from './app.controller'
-import { AppService } from './app.service'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { typeORMConfig } from '@config/typeorm.config'
 import { DataSource } from 'typeorm'
 import { UsersModule } from './users/users.module'
+import { AuthModule } from './auth/auth.module'
 
 @Module({
     imports: [
@@ -29,9 +29,10 @@ import { UsersModule } from './users/users.module'
                 return await new DataSource(options).initialize()
             },
         }),
+        AuthModule.forRoot(),
         UsersModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [],
 })
 export class AppModule {}

@@ -26,4 +26,13 @@ export class UserRepository extends Repository<User> {
     async getUserByProfileName(profileName: string) {
         return this.findOne({ where: { profileName } })
     }
+
+    async getUserByIdWithJwtInfo(userId: number) {
+        return this.findOne({
+            where: { id: userId },
+            relations: {
+                jwtStorage: true,
+            },
+        })
+    }
 }

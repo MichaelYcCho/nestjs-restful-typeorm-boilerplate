@@ -7,6 +7,7 @@ import { typeORMConfig } from '@config/typeorm.config'
 import { DataSource } from 'typeorm'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
+import { LoggerModule } from './logger/logger.module'
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module'
             },
         }),
         AuthModule.forRoot(),
+        LoggerModule.forRoot(),
         UsersModule,
     ],
     controllers: [AppController],

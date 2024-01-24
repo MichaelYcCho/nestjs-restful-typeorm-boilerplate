@@ -23,7 +23,7 @@
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage",
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-        "test:e2e": "jest --config ./test/jest-e2e.json"
+        "test:e2e": "cross-env NODE_ENV=test  jest --config ./test/jest-e2e.json"
     },
     "dependencies": {
         "@nestjs/common": "^10.0.0",
@@ -78,6 +78,7 @@
         "rootDir": "src",
         "moduleNameMapper": {
             "^src/(.*)$": "<rootDir>/$1",
+            "^auth/(.*)$": "<rootDir>/auth/$1",
             "^config/(.*)$": "<rootDir>/config/$1",
             "^core/(.*)$": "<rootDir>/core/$1",
             "^users/(.*)$": "<rootDir>/users/$1"

@@ -6,6 +6,8 @@ import { AuthController } from './controllers/auth.controller'
 import { UserRepository } from '@users/repository/user.repository'
 import { AuthService } from './services/auth.service'
 import { JwtStorageRepository } from './repository/auth.repository'
+import { JwtStorage } from './entities/jwt-storage.entity'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Global()
 @Module({})
@@ -14,6 +16,7 @@ export class AuthModule {
         return {
             module: AuthModule,
             imports: [
+                TypeOrmModule.forFeature([JwtStorage]),
                 ConfigModule,
                 UsersModule,
                 JwtModule.registerAsync({
@@ -29,7 +32,7 @@ export class AuthModule {
             ],
             providers: [AuthService, JwtStorageRepository, UserRepository],
             controllers: [AuthController],
-            exports: [AuthService, JwtModule],
+            exports: [AuthService, JwtModule, JwtStorageRepository],
         }
     }
 }

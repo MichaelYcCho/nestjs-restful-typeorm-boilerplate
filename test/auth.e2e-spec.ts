@@ -5,10 +5,12 @@ import { User } from 'src/users/entities/user.entity'
 import { AppModule } from 'src/app.module'
 import { DataSource, Repository } from 'typeorm'
 import request from 'supertest'
+import { JwtStorage } from '@auth/entities/jwt-storage.entity'
+import { bcryptHashing } from '@core/utils/hashing'
 
-const USER_BASE_URL = '/users'
+const AUTH_BASE_URL = '/auth'
 
-const createUserRequest = {
+const userRequest = {
     email: 'michael@gmail.com',
     password: '1234',
     profileName: 'Michael',
@@ -17,6 +19,8 @@ const createUserRequest = {
 describe('UsersController (e2e)', () => {
     let app: INestApplication
     let userRepository: Repository<User>
+    let jwtStorageRepository: Repository<JwtStorage>
+    let jwtStorage: JwtStorage
     let user: User
 
     beforeAll(async () => {
@@ -27,7 +31,20 @@ describe('UsersController (e2e)', () => {
         app = module.createNestApplication()
         // getRepositoryToken(User)는 User entity의 repository를 가져온다.
         userRepository = module.get<Repository<User>>(getRepositoryToken(User))
+        jwtStorageRepository = module.get<Repository<JwtStorage>>(getRepositoryToken(JwtStorage))
         await app.init()
+
+        const hashedPassword = await bcryptHashing('1234', 12)
+
+        // 테스트용 사용자 생성
+        user = await userRepository.save({
+            email: 'michael@gmail.com',
+            password: hashedPassword,
+            profileName: 'Michael',
+        })
+        await jwtStorageRepository.save({
+            user,
+        })
     })
 
     afterAll(async () => {
@@ -45,31 +62,22 @@ describe('UsersController (e2e)', () => {
         await app.close()
     })
 
-    describe('User API', () => {
-        it('should create user', async () => {
+    describe('Auth API', () => {
+        it('should login user', async () => {
             const response = await request(app.getHttpServer())
-                .post(`${USER_BASE_URL}/create`)
-                .send(createUserRequest)
-                .expect(201)
+                .post(`${AUTH_BASE_URL}/sign-in`)
+                .send({ email: userRequest.email, password: userRequest.password })
+                .expect(200)
 
-            expect(response.body).toEqual({
-                isSuccess: true,
-                message: null,
-            })
-        })
+            //check accessToken is not null
+            expect(response.body.accessToken).toBeTruthy()
+            expect(response.body.refreshToken).toBeTruthy()
 
-        it('should fail if user email already exist', async () => {
-            const response = await request(app.getHttpServer())
-                .post(`${USER_BASE_URL}/create`)
-                .send(createUserRequest)
-                .expect(400)
+            // 데이터베이스에서 사용자 정보 조회
+            const user = await userRepository.findOne({ where: { email: userRequest.email } })
 
-            expect(response.status).toBe(400)
-
-            // 에러 응답의 본문을 검증합니다.
-            expect(response.body).toMatchObject({
-                errorCode: 100002,
-            })
+            // 응답 본문의 사용자 정보와 비교
+            expect(response.body.user.id).toEqual(user.id)
         })
     })
 })

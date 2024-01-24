@@ -9,6 +9,7 @@ import { DataSource, EntityManager } from 'typeorm'
 import { UserRepository } from '../repository/user.repository'
 import { User } from '../entities/user.entity'
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
+import { LoggerHandler } from 'src/logger/logger.service'
 
 @Injectable()
 export class UserService {
@@ -17,6 +18,7 @@ export class UserService {
         private userRepository: UserRepository,
         private entityManager: EntityManager,
         private dataSource: DataSource,
+        private readonly logger: LoggerHandler,
     ) {}
 
     async createUser({ email, password, profileName }: createUserRequest): Promise<BaseResponse> {
@@ -39,6 +41,7 @@ export class UserService {
                 user,
             })
             await queryRunner.commitTransaction()
+            this.logger.log(`[CreateUser] Success: ${user.email}`)
             return { isSuccess: true, message: null }
         } catch (e) {
             await queryRunner.rollbackTransaction()

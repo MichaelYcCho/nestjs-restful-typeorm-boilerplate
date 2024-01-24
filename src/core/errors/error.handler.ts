@@ -13,6 +13,6 @@ export class ExceptionHandler extends HttpException {
 
         super(response, error.status || HttpStatus.BAD_REQUEST)
 
-        console.error(prefix, response) // 로깅 개선
+        console.log(prefix, response) // 로깅 개선
     }
 }

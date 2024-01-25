@@ -1,5 +1,6 @@
 import * as Joi from 'joi'
 import { Module } from '@nestjs/common'
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { AppController } from './app.controller'
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
@@ -8,6 +9,7 @@ import { DataSource } from 'typeorm'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
 import { LoggerModule } from './logger/logger.module'
+import { APP_GUARD } from '@nestjs/core'
 
 @Module({
     imports: [
@@ -30,11 +32,22 @@ import { LoggerModule } from './logger/logger.module'
                 return await new DataSource(options).initialize()
             },
         }),
+        ThrottlerModule.forRoot([
+            {
+                ttl: 60000, // 1 minute
+                limit: 10,
+            },
+        ]),
         AuthModule.forRoot(),
         LoggerModule.forRoot(),
         UsersModule,
     ],
     controllers: [AppController],
-    providers: [],
+    providers: [
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerGuard,
+        },
+    ],
 })
 export class AppModule {}

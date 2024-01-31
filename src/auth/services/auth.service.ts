@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -12,6 +12,7 @@ import { JwtStorageRepository } from '@auth/repository/auth.repository'
 import { TokenPayload } from '@auth/auth_type'
 import { UserRepository } from '@users/repository/user.repository'
 import { AccessTokenResponse, RefreshTokenRequest, TokenResponse } from '@auth/dtos/jwt.dto'
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager'
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
         private readonly configService: ConfigService,
         private jwtService: JwtService,
         private userRepository: UserRepository,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
     async validateUser({ email, password }): Promise<any> {
@@ -83,10 +85,10 @@ export class AuthService {
             Comments: 
                 user refreshToken update it.
         */
-        const jwtToken = await this.jwtStorageRepository.findJwtTokenByUserId(user.id)
+        const jwtStorage = await this.jwtStorageRepository.findJwtStorageByUserId(user.id)
 
-        if (jwtToken == null) {
-            throw new ExceptionHandler(AUTH_ERRORS.NOT_EXIST_JWT_TOKEN)
+        if (jwtStorage == null) {
+            throw new ExceptionHandler(AUTH_ERRORS.NOT_EXIST_JWT_STORAGE)
         }
 
         const verifiedToken = this.jwtService.verify(refreshToken, {
@@ -95,7 +97,7 @@ export class AuthService {
         const refreshExpiredAt = verifiedToken.exp
         const hashingToken = await bcryptHashing(refreshToken, 10)
 
-        await this.jwtStorageRepository.update(jwtToken.id, {
+        await this.jwtStorageRepository.update(jwtStorage.id, {
             refreshToken: hashingToken,
             refreshTokenExpiredAt: refreshExpiredAt,
         })
@@ -145,10 +147,10 @@ export class AuthService {
             Comments: 
                 Remove refresh token.
         */
-        const jwtToken = await this.jwtStorageRepository.findJwtTokenByUserId(user.id)
+        const jwtStorage = await this.jwtStorageRepository.findJwtStorageByUserId(user.id)
 
-        if (!jwtToken) {
-            throw new ExceptionHandler(AUTH_ERRORS.NOT_EXIST_TOKEN)
+        if (!jwtStorage) {
+            throw new ExceptionHandler(AUTH_ERRORS.NOT_EXIST_JWT_STORAGE)
         }
 
         await this.jwtStorageRepository.update(user.id, {
@@ -160,5 +162,18 @@ export class AuthService {
 
     async getUserInfo(userId: number): Promise<User> {
         return await this.userRepository.getUserById(userId)
+    }
+
+    async getTokenWithRedis(user: User): Promise<TokenResponse> {
+        const accessToken = await this.createAccessToken(user)
+        const refreshToken = await this.createRefreshToken(user)
+        await this.updateRefreshToken(user, refreshToken)
+        const tokenInfo = { accessToken, refreshToken, user }
+        await this.cacheManager.set('tokenInfo', tokenInfo)
+        const cacheTokenInfo = await this.cacheManager.get('tokenInfo')
+        // await this.cacheManager.del('tokenInfo')
+        // await this.cacheManager.reset()
+        console.log(cacheTokenInfo)
+        return tokenInfo
     }
 }

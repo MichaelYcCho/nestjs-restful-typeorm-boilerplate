@@ -1,7 +1,7 @@
 export const AUTH_ERRORS = {
-    NOT_EXIST_TOKEN: {
+    NOT_EXIST_JWT_STORAGE: {
         errorCode: 200001,
-        message: 'Not exist token',
+        message: 'Not exist jwt storage',
     },
     INVALID_ACCESS_TOKEN: {
         errorCode: 200002,
@@ -22,10 +22,6 @@ export const AUTH_ERRORS = {
     FAILED_AUTHENTICATE: {
         errorCode: 200006,
         message: 'Failed authenticate',
-    },
-    NOT_EXIST_JWT_TOKEN: {
-        errorCode: 200007,
-        message: 'Not exist jwt token',
     },
 }
 

@@ -1,5 +1,6 @@
 import * as Joi from 'joi'
 import { Module } from '@nestjs/common'
+import { CacheModule } from '@nestjs/cache-manager'
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { AppController } from './app.controller'
 import { ConfigModule, ConfigService } from '@nestjs/config'
@@ -13,6 +14,11 @@ import { APP_GUARD } from '@nestjs/core'
 
 @Module({
     imports: [
+        CacheModule.register({
+            ttl: 60, // expiration time in seconds
+            max: 1000, // maximum number of items in cache, if exceeded least recently used items will be evicted
+            isGlobal: true, // if true, this module will be global
+        }),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: `./env/.env.${process.env.NODE_ENV}`,

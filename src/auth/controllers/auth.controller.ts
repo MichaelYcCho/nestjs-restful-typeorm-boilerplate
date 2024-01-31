@@ -69,4 +69,23 @@ export class AuthController {
         const response = plainToInstance(BaseResponse, result)
         return response
     }
+
+    @ApiResponse({
+        type: TokenResponse,
+        status: 200,
+        description: 'success',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
+    @Version('1')
+    @ApiOperation({ summary: 'JWT Login(Redis Ver)' })
+    @HttpCode(200)
+    @Post('redis-auth')
+    async redisTest(@Body(ValidationPipe) authInfoRequest: AuthInfoRequest): Promise<TokenResponse> {
+        const user = await this.authService.validateUser(authInfoRequest)
+
+        const tokenInfo = await this.authService.getTokenWithRedis(user)
+        const response = plainToInstance(TokenResponse, tokenInfo)
+        console.log(`[Login] ${user.id} - ${user.profileName} Login Success`)
+        return response
+    }
 }

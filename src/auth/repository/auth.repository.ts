@@ -8,7 +8,7 @@ export class JwtStorageRepository extends Repository<JwtStorage> {
         super(JwtStorage, dataSource.createEntityManager())
     }
 
-    async findJwtTokenByUserId(userId: number) {
+    async findJwtStorageByUserId(userId: number) {
         return this.findOne({ where: { user: { id: userId } } })
     }
 }

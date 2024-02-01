@@ -1,3 +1,4 @@
+import * as redisStore from 'cache-manager-ioredis'
 import * as Joi from 'joi'
 import { Module } from '@nestjs/common'
 import { CacheModule } from '@nestjs/cache-manager'
@@ -15,6 +16,11 @@ import { APP_GUARD } from '@nestjs/core'
 @Module({
     imports: [
         CacheModule.register({
+            store: redisStore,
+            socket: {
+                host: 'localhost',
+                port: 5555,
+            },
             ttl: 60, // expiration time in seconds
             max: 1000, // maximum number of items in cache, if exceeded least recently used items will be evicted
             isGlobal: true, // if true, this module will be global

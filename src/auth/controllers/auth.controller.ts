@@ -82,7 +82,6 @@ export class AuthController {
     @Post('redis-auth')
     async redisTest(@Body(ValidationPipe) authInfoRequest: AuthInfoRequest): Promise<TokenResponse> {
         const user = await this.authService.validateUser(authInfoRequest)
-
         const tokenInfo = await this.authService.getTokenWithRedis(user)
         const response = plainToInstance(TokenResponse, tokenInfo)
         console.log(`[Login] ${user.id} - ${user.profileName} Login Success`)

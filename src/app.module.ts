@@ -15,16 +15,6 @@ import { APP_GUARD } from '@nestjs/core'
 
 @Module({
     imports: [
-        CacheModule.register({
-            store: redisStore,
-            socket: {
-                host: 'localhost',
-                port: 5555,
-            },
-            ttl: 60, // expiration time in seconds
-            max: 1000, // maximum number of items in cache, if exceeded least recently used items will be evicted
-            isGlobal: true, // if true, this module will be global
-        }),
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: `./env/.env.${process.env.NODE_ENV}`,
@@ -36,6 +26,14 @@ import { APP_GUARD } from '@nestjs/core'
                 DB_PASSWORD: Joi.string().required(),
                 DB_NAME: Joi.string().required(),
             }),
+        }),
+        CacheModule.register({
+            store: redisStore,
+            host: process.env.REDIS_HOST,
+            port: process.env.REDIS_PORT,
+            ttl: 60, // expiration time in seconds
+            max: 1000, // maximum number of items in cache, if exceeded least recently used items will be evicted
+            isGlobal: true, // if true, this module will be global
         }),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],

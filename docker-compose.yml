@@ -10,6 +10,17 @@ services:
         ports:
             - '3000:3000'
         volumes:
-            - ~/Documents/logs/pm2:/app/logs/pm2
+            - ~/Documents/boilerplate/logs/pm2:/app/logs/pm2
         environment:
             - NODE_ENV=${NODE_ENV}
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        ports:
+            - '6379:6379'
+        volumes:
+            - ~/Documents/boilerplate/redis_data:/data
+
+volumes:
+    redis_data:

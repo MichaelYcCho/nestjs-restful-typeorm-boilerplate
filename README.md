@@ -24,7 +24,33 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+[Nest](https://github.com/nestjs/nest) framework. <br>
+NestJS, TypeOrm, Postgresql Boilerplate. <br>
+After Server Start, you can check API Swagger 'http://localhost:3000/docs'
+
+## Docker Compose Start
+
+```bash
+# using docker compose write env suffix , ex) .env.dev
+$ docker-compose --env-file ./env/.env.{env_suffix} up --build
+
+```
+
+---
+
+# Docker Start
+
+```bash
+# file build
+$ docker build --no-cache --build-arg NODE_ENV={env} boilerplate:0.1 .
+
+# after build success
+$ docker run -itd -p 3000:3000 \
+ --name boilerplate \
+ -v ~/Documents/logs/pm2:/app/logs/pm2 \
+ -e NODE_ENV=dev \
+ boilerplate:0.1
+```
 
 ## Installation
 
@@ -49,24 +75,19 @@ $ pnpm run start:prod
 
 ```bash
 # unit tests
-$ pnpm run test
+$ pnpm test:unit
 
 # e2e tests
-$ pnpm run test:e2e
+$ pnpm test:e2e
 
 # test coverage
 $ pnpm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+-   Author - Michael Cho
+-   LinkedIn - [https://www.linkedin.com/in/michael-yc-cho/](https://www.linkedin.com/in/michael-yc-cho/)
 
 ## License
 

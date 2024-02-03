@@ -19,7 +19,7 @@ import { APP_GUARD } from '@nestjs/core'
             isGlobal: true,
             envFilePath: `./env/.env.${process.env.NODE_ENV}`,
             validationSchema: Joi.object({
-                NODE_ENV: Joi.string().valid('dev', 'test', 'prod').required(),
+                NODE_ENV: Joi.string().valid('dev', 'dev.docker', 'test', 'prod').required(),
                 DB_HOST: Joi.string().required(),
                 DB_PORT: Joi.string().required(),
                 DB_USERNAME: Joi.string().required(),

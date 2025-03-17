@@ -1,10 +1,11 @@
 # STEP 1: Build Stage
-FROM node:20.10.0-alpine3.18 AS builder
+FROM node:22-bullseye AS builder
 ARG NODE_ENV
-
 ENV NODE_ENV=${NODE_ENV}
 ENV TZ Asia/Seoul
-RUN npm install -g pnpm
+
+RUN corepack enable && corepack prepare pnpm@10.6.4 --activate
+
 
 WORKDIR /app/boilerplate
 COPY . .
@@ -13,24 +14,24 @@ RUN pnpm build
 RUN pnpm docker:db:migrate
 
 # STEP 2: Run Stage
-FROM node:20.10.0-alpine3.18
+FROM node:22-bullseye
 ENV NODE_ENV=${NODE_ENV}
 ENV TZ Asia/Seoul
 WORKDIR /app/boilerplate
-COPY --from=builder /app/boilerplate/dist ./dist
 
+RUN corepack enable && corepack prepare pnpm@10.6.4 --activate
+
+# 빌드 단계에서 생성된 production 의존성과 빌드 결과 복사
+COPY --from=builder /api/node_modules ./node_modules
+COPY --from=builder /api/dist ./dist
+
+COPY package.json pm2.config.js docker.start.sh ./
 COPY env ./env
-COPY package.json .
-COPY pnpm-lock.yaml .
-COPY pm2.config.js .
-COPY docker.start.sh .
 
-RUN chmod +x ./docker.start.sh
-RUN npm install -g pnpm
-RUN npm install pm2 -g
-RUN pnpm install --production
+# docker.start.sh 실행 권한 부여 및 pm2 전역 설치
+RUN chmod +x ./docker.start.sh && npm install -g pm2
 
-EXPOSE 3000
+EXPOSE 8000
 CMD ["./docker.start.sh"]
 
 

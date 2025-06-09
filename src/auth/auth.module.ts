@@ -3,9 +3,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { UsersModule } from '@users/users.module'
 import { JwtModule } from '@nestjs/jwt'
 import { AuthController } from './controllers/auth.controller'
-import { UserRepository } from '@users/repository/user.repository'
+import { UsersRepository } from '@users/repository/user.repository'
 import { AuthService } from './services/auth.service'
-import { JwtStorageRepository } from './repository/auth.repository'
+import { JwtStorageRepository } from './repositories/auth.repository'
 import { JwtStorage } from './entities/jwt-storage.entity'
 import { TypeOrmModule } from '@nestjs/typeorm'
 
@@ -30,7 +30,7 @@ export class AuthModule {
                     inject: [ConfigService],
                 }),
             ],
-            providers: [AuthService, JwtStorageRepository, UserRepository],
+            providers: [AuthService, JwtStorageRepository, UsersRepository],
             controllers: [AuthController],
             exports: [AuthService, JwtModule, JwtStorageRepository],
         }

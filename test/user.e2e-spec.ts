@@ -16,7 +16,7 @@ const createUserRequest = {
 
 describe('UsersController (e2e)', () => {
     let app: INestApplication
-    let userRepository: Repository<User>
+    let usersRepository: Repository<User>
     let user: User
 
     beforeAll(async () => {
@@ -26,7 +26,7 @@ describe('UsersController (e2e)', () => {
 
         app = module.createNestApplication()
         // getRepositoryToken(User)는 User entity의 repository를 가져온다.
-        userRepository = module.get<Repository<User>>(getRepositoryToken(User))
+        usersRepository = module.get<Repository<User>>(getRepositoryToken(User))
         await app.init()
     })
 

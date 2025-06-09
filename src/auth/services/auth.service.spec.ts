@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing'
 import { AuthService } from './auth.service'
 import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { JwtStorageRepository } from '@auth/repository/auth.repository'
-import { UserRepository } from '@users/repository/user.repository'
+import { JwtStorageRepository } from '@auth/repositories/auth.repository'
+import { UsersRepository } from '@users/repository/user.repository'
 import { ConfigService } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 
@@ -10,7 +10,7 @@ const mockJwtStorageRepository = () => ({
     findOne: jest.fn(),
 })
 
-const mockUserRepository = () => ({
+const mockUsersRepository = () => ({
     getUserByEmailWithPwd: jest.fn(),
 })
 
@@ -43,8 +43,8 @@ describe('AuthService', () => {
                     useFactory: mockJwtStorageRepository,
                 },
                 {
-                    provide: UserRepository,
-                    useFactory: mockUserRepository,
+                    provide: UsersRepository,
+                    useFactory: mockUsersRepository,
                 },
 
                 {

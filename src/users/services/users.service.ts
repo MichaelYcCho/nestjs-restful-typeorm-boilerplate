@@ -2,20 +2,20 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
-import { createUserRequest, updateUserRequest } from '../dtos/user.dto'
+import { createUserRequest, updateUserRequest } from '../dto/user.dto'
 import { ExceptionHandler } from '@core/errors/error.handler'
-import { BaseResponse } from '@core/dtos/response.dto'
+import { BaseResponse } from '@core/dto/response.dto'
 import { DataSource, EntityManager } from 'typeorm'
-import { UserRepository } from '../repository/user.repository'
+import { UsersRepository } from '../repository/user.repository'
 import { User } from '../entities/user.entity'
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 import { LoggerHandler } from 'src/logger/logger.service'
 
 @Injectable()
-export class UserService {
+export class UsersService {
     constructor(
-        @InjectRepository(UserRepository)
-        private userRepository: UserRepository,
+        @InjectRepository(UsersRepository)
+        private usersRepository: UsersRepository,
         private entityManager: EntityManager,
         private dataSource: DataSource,
         private readonly logger: LoggerHandler,
@@ -27,12 +27,12 @@ export class UserService {
         await queryRunner.connect()
         await queryRunner.startTransaction()
         try {
-            const existUser = await this.userRepository.getUserByEmail(email)
+            const existUser = await this.usersRepository.getUserByEmail(email)
             if (existUser) {
                 throw new ExceptionHandler(USERS_ERRORS.USER_EMAIL_ALREADY_EXIST)
             }
             const hashedPassword = await bcryptHashing(password, 12)
-            const user = await this.userRepository.save({
+            const user = await this.usersRepository.save({
                 email,
                 password: hashedPassword,
                 profileName,
@@ -58,13 +58,13 @@ export class UserService {
 
     async updateUser({ profileName, role }: updateUserRequest): Promise<User> {
         try {
-            const user = await this.userRepository.findOne({ where: { profileName } })
+            const user = await this.usersRepository.findOne({ where: { profileName } })
             if (!user) {
                 throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
             }
             user.profileName = profileName
             user.role = role
-            await this.userRepository.save(user)
+            await this.usersRepository.save(user)
             return user
         } catch (e) {
             if (e instanceof ExceptionHandler) {

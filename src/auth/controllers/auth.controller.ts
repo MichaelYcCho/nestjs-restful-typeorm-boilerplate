@@ -4,10 +4,10 @@ import { plainToInstance } from 'class-transformer'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
 import { AUTH_ERRORS, USERS_ERRORS } from '@core/errors/error.list'
 import { ExceptionHandler } from '@core/errors/error.handler'
-import { BaseResponse } from '@core/dtos/response.dto'
+import { BaseResponse } from '@core/dto/response.dto'
 import { JwtAuthGuard } from '../guards/jwt.access.guard'
 import { AuthService } from '../services/auth.service'
-import { AccessTokenResponse, AuthInfoRequest, RefreshTokenRequest, TokenResponse } from '../dtos/jwt.dto'
+import { AccessTokenResponse, AuthInfoRequest, RefreshTokenRequest, TokenResponse } from '../dto/jwt.dto'
 
 @ApiTags('Auth')
 @Controller('auth')

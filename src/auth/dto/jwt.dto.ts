@@ -1,4 +1,4 @@
-import { UserResponse } from '@users/dtos/user.dto'
+import { UserResponse } from '@users/dto/user.dto'
 import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, Matches } from 'class-validator'
 

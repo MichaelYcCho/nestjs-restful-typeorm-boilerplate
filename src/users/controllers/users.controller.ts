@@ -1,8 +1,8 @@
 import { Body, Controller, Patch, Post, UseGuards, Version } from '@nestjs/common'
-import { UserService } from '../services/users.service'
-import { UserResponse, createUserRequest, updateUserRequest } from '../dtos/user.dto'
+import { UsersService } from '../services/users.service'
+import { UserResponse, createUserRequest, updateUserRequest } from '../dto/user.dto'
 import { plainToInstance } from 'class-transformer'
-import { BaseResponse } from '@core/dtos/response.dto'
+import { BaseResponse } from '@core/dto/response.dto'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
@@ -11,8 +11,8 @@ import { getUser } from '@core/decorators/getUser.decorator'
 
 @ApiTags('Users')
 @Controller('users')
-export class UserController {
-    constructor(private readonly usersService: UserService) {}
+export class UsersController {
+    constructor(private readonly usersService: UsersService) {}
 
     @Version('1')
     @ApiOperation({ summary: 'CreateUser' })

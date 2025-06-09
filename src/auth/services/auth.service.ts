@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt'
+import * as bcrypt from 'bcryptjs'
 import { Inject, Injectable } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
@@ -8,10 +8,10 @@ import { AUTH_ERRORS, USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
 import { User } from '@users/entities/user.entity'
 
-import { JwtStorageRepository } from '@auth/repository/auth.repository'
+import { JwtStorageRepository } from '@auth/repositories/auth.repository'
 import { TokenPayload } from '@auth/auth_type'
-import { UserRepository } from '@users/repository/user.repository'
-import { AccessTokenResponse, RefreshTokenRequest, TokenResponse } from '@auth/dtos/jwt.dto'
+import { UsersRepository } from '@users/repository/user.repository'
+import { AccessTokenResponse, RefreshTokenRequest, TokenResponse } from '@auth/dto/jwt.dto'
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager'
 
 @Injectable()
@@ -21,12 +21,12 @@ export class AuthService {
         private jwtStorageRepository: JwtStorageRepository,
         private readonly configService: ConfigService,
         private jwtService: JwtService,
-        private userRepository: UserRepository,
+        private usersRepository: UsersRepository,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
     async validateUser({ email, password }): Promise<any> {
-        const user = await this.userRepository.getUserByEmailWithPwd(email)
+        const user = await this.usersRepository.getUserByEmailWithPwd(email)
         if (user && (await bcrypt.compare(password, user.password))) {
             const { password, ...result } = user // eslint-disable-line
             return result
@@ -130,7 +130,7 @@ export class AuthService {
                 if refresh token is None, return null.
         */
 
-        const user: User = await this.userRepository.getUserByIdWithJwtInfo(userId)
+        const user: User = await this.usersRepository.getUserByIdWithJwtInfo(userId)
 
         if (user.jwtStorage.refreshToken == null) {
             return null
@@ -161,7 +161,7 @@ export class AuthService {
     }
 
     async getUserInfo(userId: number): Promise<User> {
-        return await this.userRepository.getUserById(userId)
+        return await this.usersRepository.getUserById(userId)
     }
 
     async getTokenWithRedis(user: User): Promise<TokenResponse> {

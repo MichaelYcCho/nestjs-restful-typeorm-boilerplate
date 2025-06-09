@@ -56,9 +56,9 @@ export class UsersService {
         }
     }
 
-    async updateUser({ profileName, role }: updateUserRequest): Promise<User> {
+    async updateUser({ userId, profileName, role }: updateUserRequest): Promise<User> {
         try {
-            const user = await this.usersRepository.findOne({ where: { profileName } })
+            const user = await this.usersRepository.getUserById(userId)
             if (!user) {
                 throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
             }

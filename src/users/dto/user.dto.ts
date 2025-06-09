@@ -26,6 +26,13 @@ export class createUserRequest {
 
 export class updateUserRequest {
     @ApiProperty({
+        example: 1,
+        description: 'User ID',
+    })
+    @IsNumber()
+    userId: number
+
+    @ApiProperty({
         example: 'john',
         description: 'Profile Name',
     })

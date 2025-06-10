@@ -40,7 +40,7 @@ export class UsersController {
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
     @Patch('/update')
     async updateUser(@getUser() user, @Body() data: updateUserRequest): Promise<UserResponse> {
-        const result = await this.usersService.updateUser(data)
+        const result = await this.usersService.updateUser(user, data)
         const response = plainToInstance(UserResponse, result)
         return response
     }

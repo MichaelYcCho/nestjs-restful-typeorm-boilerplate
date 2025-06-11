@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
-import { createUserRequest, updateUserRequest } from '../dto/user.dto'
+
 import { ExceptionHandler } from '@core/errors/error.handler'
 import { BaseResponse } from '@core/dto/response.dto'
 import { DataSource, EntityManager } from 'typeorm'
-import { UsersRepository } from '../repository/user.repository'
-import { User } from '../entities/user.entity'
+
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 import { LoggerHandler } from 'src/logger/logger.service'
+import { updateUserDto } from '@users/dto/update-user.dto'
+import { createUserDto } from '@users/dto/create-user.dto'
+import { UsersRepository } from '@users/repository/user.repository'
+import { UserDto } from '@users/dto/user.dto'
 
 @Injectable()
 export class UsersService {
@@ -21,7 +24,7 @@ export class UsersService {
         private readonly logger: LoggerHandler,
     ) {}
 
-    async createUser({ email, password, profileName }: createUserRequest): Promise<BaseResponse> {
+    async createUser({ email, password, profileName }: createUserDto): Promise<BaseResponse> {
         const queryRunner = this.dataSource.createQueryRunner()
 
         await queryRunner.connect()
@@ -56,7 +59,7 @@ export class UsersService {
         }
     }
 
-    async updateUser(user: User, { profileName, role }: updateUserRequest): Promise<User> {
+    async updateUser(user: UserDto, { profileName, role }: updateUserDto): Promise<UserDto> {
         try {
             user.profileName = profileName
             user.role = role

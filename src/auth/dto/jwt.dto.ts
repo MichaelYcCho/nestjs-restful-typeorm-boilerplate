@@ -1,4 +1,4 @@
-import { UserResponse } from '@users/dto/user.dto'
+import { UserDto } from '@users/dto/user.dto'
 import { Type } from 'class-transformer'
 import { IsNotEmpty, IsString, Matches } from 'class-validator'
 
@@ -22,8 +22,8 @@ export class TokenResponse {
     @IsString()
     refreshToken: string
 
-    @Type(() => UserResponse)
-    user: UserResponse
+    @Type(() => UserDto)
+    user: UserDto
 }
 
 export class AccessTokenResponse {

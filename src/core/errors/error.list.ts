@@ -51,4 +51,9 @@ export const USERS_ERRORS = {
         status: 400,
         message: 'Failed update user',
     },
+    FAILED_DELETE_USER: {
+        errorCode: 100006,
+        status: 400,
+        message: 'Failed delete user',
+    },
 }

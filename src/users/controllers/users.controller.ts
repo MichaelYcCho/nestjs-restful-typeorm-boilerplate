@@ -11,6 +11,7 @@ import { getUser } from '@core/decorators/getUser.decorator'
 import { createUserDto } from '@users/dto/create-user.dto'
 import { UserDto } from '@users/dto/user.dto'
 import { updateUserDto } from '@users/dto/update-user.dto'
+import { User } from '@users/entities/user.entity'
 
 @ApiTags('Users')
 @Controller('users')
@@ -45,6 +46,22 @@ export class UsersController {
     async updateUser(@getUser() user, @Body() data: updateUserDto): Promise<UserDto> {
         const result = await this.usersService.updateUser(user, data)
         const response = plainToInstance(UserDto, result)
+        return response
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Version('1')
+    @ApiOperation({ summary: 'DeleteUser' })
+    @ApiResponse({
+        type: BaseResponse,
+        status: 200,
+        description: 'Delete User',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.FAILED_DELETE_USER])
+    @Delete('/delete')
+    async deleteUser(@getUser() user: User): Promise<BaseResponse> {
+        const result = await this.usersService.deleteUser(user)
+        const response = plainToInstance(BaseResponse, result)
         return response
     }
 }

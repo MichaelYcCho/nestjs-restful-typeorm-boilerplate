@@ -13,6 +13,7 @@ import { updateUserDto } from '@users/dto/update-user.dto'
 import { createUserDto } from '@users/dto/create-user.dto'
 import { UsersRepository } from '@users/repository/user.repository'
 import { UserDto } from '@users/dto/user.dto'
+import { User } from '@users/entities/user.entity'
 
 @Injectable()
 export class UsersService {
@@ -71,6 +72,21 @@ export class UsersService {
             } else {
                 console.error(`[UpdateUser] Error: ${e.message}`)
                 throw new ExceptionHandler(USERS_ERRORS.FAILED_UPDATE_USER)
+            }
+        }
+    }
+
+    async deleteUser(user: User): Promise<BaseResponse> {
+        try {
+            await this.usersRepository.deleteUserWithJwtStorage(user)
+            this.logger.log(`[DeleteUser] Success: ${user.email}`)
+            return { isSuccess: true, message: null }
+        } catch (e) {
+            if (e instanceof ExceptionHandler) {
+                throw e
+            } else {
+                console.error(`[DeleteUser] Error: ${e.message}`)
+                throw new ExceptionHandler(USERS_ERRORS.FAILED_DELETE_USER)
             }
         }
     }

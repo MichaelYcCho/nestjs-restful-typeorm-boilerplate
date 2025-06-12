@@ -37,6 +37,10 @@ const updateUser = (app: INestApplication, userData: any, token: string) => {
         .send(userData)
 }
 
+const deleteUser = (app: INestApplication, token: string) => {
+    return request(app.getHttpServer()).delete(`${USER_BASE_URL}/delete`).set('Authorization', `Bearer ${token}`)
+}
+
 describe('UsersController (e2e) - Sequential Tests', () => {
     let app: INestApplication
     let usersRepository: Repository<User>
@@ -46,6 +50,7 @@ describe('UsersController (e2e) - Sequential Tests', () => {
     let jwtService: JwtService
     let configService: ConfigService
     let authToken: string
+    let secondAuthToken: string
 
     beforeAll(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -159,31 +164,86 @@ describe('UsersController (e2e) - Sequential Tests', () => {
             expect(createdUser.id).toBeDefined()
 
             secondUserId = createdUser.id
+            // 두 번째 사용자용 JWT 토큰 생성
+            secondAuthToken = jwtService.sign(
+                {
+                    id: createdUser.id,
+                    profileName: createdUser.profileName,
+                },
+                {
+                    secret: configService.get<string>('JWT_ACCESS_SECRET'),
+                },
+            )
             console.log('Second user created with ID:', secondUserId)
         })
 
-        // 네 번째 테스트: 최종 상태 검증
-        it('4. should verify final state', async () => {
-            console.log('Verifying final state with IDs:', { firstUserId, secondUserId })
+        // 네 번째 테스트: 두 번째 사용자 삭제
+        it('4. should delete second user', async () => {
+            console.log('Attempting to delete second user with ID:', secondUserId)
+            expect(secondUserId).toBeDefined()
+            expect(secondAuthToken).toBeDefined()
 
-            // 첫 번째 사용자 확인
-            const firstUser = await usersRepository.findOne({
-                where: { id: firstUserId },
+            const response = await deleteUser(app, secondAuthToken)
+            console.log('Delete response status:', response.status)
+            console.log('Delete response body:', JSON.stringify(response.body, null, 2))
+
+            expect(response.status).toBe(200)
+
+            expect(response.body).toEqual({
+                isSuccess: true,
+                message: null,
             })
-            expect(firstUser).toBeDefined()
-            expect(firstUser.profileName).toBe('Michael Updated')
 
-            // 두 번째 사용자 확인
-            const secondUser = await usersRepository.findOne({
+            // 삭제 확인 - 사용자가 더 이상 존재하지 않아야 함
+            const deletedUser = await usersRepository.findOne({
                 where: { id: secondUserId },
             })
-            expect(secondUser).toBeDefined()
-            expect(secondUser.email).toBe(TEST_USERS.second.email)
+            expect(deletedUser).toBeNull()
+            console.log('Second user successfully deleted')
+        })
 
-            // 최종적으로 데이터베이스에 두 명의 사용자가 존재해야 함
+        // 다섯 번째 테스트: 첫 번째 사용자 삭제
+        it('5. should delete first user', async () => {
+            console.log('Attempting to delete first user with ID:', firstUserId)
+            expect(firstUserId).toBeDefined()
+            expect(authToken).toBeDefined()
+
+            const response = await deleteUser(app, authToken).expect(200)
+
+            expect(response.body).toEqual({
+                isSuccess: true,
+                message: null,
+            })
+
+            // 삭제 확인 - 사용자가 더 이상 존재하지 않아야 함
+            const deletedUser = await usersRepository.findOne({
+                where: { id: firstUserId },
+            })
+            expect(deletedUser).toBeNull()
+            console.log('First user successfully deleted')
+        })
+
+        // 여섯 번째 테스트: 최종 상태 검증 (모든 사용자 삭제됨)
+        it('6. should verify all users are deleted', async () => {
+            console.log('Verifying all users are deleted')
+
+            // 최종적으로 데이터베이스에 사용자가 존재하지 않아야 함
             const finalUsers = await usersRepository.find()
-            expect(finalUsers).toHaveLength(2)
-            console.log('Final state verification completed')
+            expect(finalUsers).toHaveLength(0)
+            console.log('Final state verification completed - all users deleted')
+        })
+
+        // 일곱 번째 테스트: 삭제된 사용자로 삭제 시도 (실패 케이스)
+        it('7. should fail to delete already deleted user', async () => {
+            console.log('Attempting to delete already deleted user')
+
+            // 이미 삭제된 사용자의 토큰으로 삭제 시도 (400 예상)
+            const response = await deleteUser(app, authToken)
+            console.log('Delete response for deleted user:', response.status, response.body)
+
+            // 삭제된 사용자의 토큰은 401 Unauthorized 또는 400 Bad Request를 반환해야 함
+            expect([400, 401, 403]).toContain(response.status)
+            console.log('Delete attempt with deleted user token failed as expected')
         })
     })
 })

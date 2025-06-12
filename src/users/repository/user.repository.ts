@@ -45,8 +45,10 @@ export class UsersRepository extends Repository<User> {
         await queryRunner.connect()
         await queryRunner.startTransaction()
         try {
-            await this.remove(user)
-            await queryRunner.manager.delete(JwtStorage, { user })
+            // JWT Storage 먼저 삭제 (외래키 제약조건 때문에)
+            await queryRunner.manager.delete(JwtStorage, { user: { id: user.id } })
+            // 그 다음 User 삭제
+            await queryRunner.manager.remove(User, user)
             await queryRunner.commitTransaction()
         } catch (e) {
             await queryRunner.rollbackTransaction()

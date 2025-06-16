@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
+import { plainToInstance } from 'class-transformer'
 
 import { ExceptionHandler } from '@core/errors/error.handler'
 import { BaseResponse } from '@core/dto/response.dto'
@@ -87,6 +88,33 @@ export class UsersService {
             } else {
                 console.error(`[DeleteUser] Error: ${e.message}`)
                 throw new ExceptionHandler(USERS_ERRORS.FAILED_DELETE_USER)
+            }
+        }
+    }
+
+    async getAllUsers(): Promise<UserDto[]> {
+        try {
+            const users = await this.usersRepository.getAllUsers()
+            return users.map((user) => plainToInstance(UserDto, user))
+        } catch (e) {
+            console.error(`[GetAllUsers] Error: ${e.message}`)
+            throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
+        }
+    }
+
+    async getUserById(userId: number): Promise<UserDto> {
+        try {
+            const user = await this.usersRepository.getUserByIdForDetail(userId)
+            if (!user) {
+                throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
+            }
+            return plainToInstance(UserDto, user)
+        } catch (e) {
+            if (e instanceof ExceptionHandler) {
+                throw e
+            } else {
+                console.error(`[GetUserById] Error: ${e.message}`)
+                throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
             }
         }
     }

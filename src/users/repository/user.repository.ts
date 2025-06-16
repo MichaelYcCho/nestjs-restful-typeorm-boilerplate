@@ -39,6 +39,20 @@ export class UsersRepository extends Repository<User> {
         })
     }
 
+    async getAllUsers(): Promise<User[]> {
+        return this.find({
+            select: ['id', 'email', 'profileName', 'role', 'createdAt', 'updatedAt'],
+            order: { createdAt: 'DESC' },
+        })
+    }
+
+    async getUserByIdForDetail(userId: number): Promise<User | null> {
+        return this.findOne({
+            where: { id: userId },
+            select: ['id', 'email', 'profileName', 'role', 'createdAt', 'updatedAt'],
+        })
+    }
+
     async deleteUserWithJwtStorage(user: User): Promise<void> {
         const queryRunner = this.dataSource.createQueryRunner()
 

@@ -64,4 +64,38 @@ export class UsersController {
         const response = plainToInstance(BaseResponse, result)
         return response
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Version('1')
+    @ApiOperation({ summary: 'GetAllUsers' })
+    @ApiResponse({
+        type: [UserDto],
+        status: 200,
+        description: 'Get All Users',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
+    @Get('/list')
+    async getAllUsers(): Promise<UserDto[]> {
+        const result = await this.usersService.getAllUsers()
+        return result
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Version('1')
+    @ApiOperation({ summary: 'GetUserById' })
+    @ApiResponse({
+        type: UserDto,
+        status: 200,
+        description: 'Get User Detail',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
+    @Get('/:id')
+    async getUserById(@Param('id') id: string): Promise<UserDto> {
+        const userId = parseInt(id, 10)
+        if (isNaN(userId)) {
+            throw new Error('Invalid user ID')
+        }
+        const result = await this.usersService.getUserById(userId)
+        return result
+    }
 }

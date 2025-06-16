@@ -74,10 +74,10 @@ export class UsersController {
         description: 'Get All Users',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
-    @Get('/list')
-    async getAllUsers(): Promise<UserDto[]> {
-        const result = await this.usersService.getAllUsers()
-        return result
+    @Get('')
+    async getUserList(): Promise<UserDto[]> {
+        const result = await this.usersService.getUserList()
+        return result.map((user) => plainToInstance(UserDto, user))
     }
 
     @UseGuards(JwtAuthGuard)
@@ -96,6 +96,6 @@ export class UsersController {
             throw new Error('Invalid user ID')
         }
         const result = await this.usersService.getUserById(userId)
-        return result
+        return plainToInstance(UserDto, result)
     }
 }

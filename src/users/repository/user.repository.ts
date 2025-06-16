@@ -39,7 +39,7 @@ export class UsersRepository extends Repository<User> {
         })
     }
 
-    async getAllUsers(): Promise<User[]> {
+    async getUserList(): Promise<User[]> {
         return this.find({
             select: ['id', 'email', 'profileName', 'role', 'createdAt', 'updatedAt'],
             order: { createdAt: 'DESC' },

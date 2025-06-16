@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
-import { plainToInstance } from 'class-transformer'
 
 import { ExceptionHandler } from '@core/errors/error.handler'
 import { BaseResponse } from '@core/dto/response.dto'
@@ -61,7 +60,7 @@ export class UsersService {
         }
     }
 
-    async updateUser(user: UserDto, { profileName, role }: updateUserDto): Promise<UserDto> {
+    async updateUser(user: User, { profileName, role }: updateUserDto): Promise<User> {
         try {
             user.profileName = profileName
             user.role = role
@@ -92,23 +91,23 @@ export class UsersService {
         }
     }
 
-    async getAllUsers(): Promise<UserDto[]> {
+    async getUserList(): Promise<User[]> {
         try {
-            const users = await this.usersRepository.getAllUsers()
-            return users.map((user) => plainToInstance(UserDto, user))
+            const users = await this.usersRepository.getUserList()
+            return users
         } catch (e) {
             console.error(`[GetAllUsers] Error: ${e.message}`)
             throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
         }
     }
 
-    async getUserById(userId: number): Promise<UserDto> {
+    async getUserById(userId: number): Promise<User> {
         try {
             const user = await this.usersRepository.getUserByIdForDetail(userId)
             if (!user) {
                 throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
             }
-            return plainToInstance(UserDto, user)
+            return user
         } catch (e) {
             if (e instanceof ExceptionHandler) {
                 throw e

@@ -1,13 +1,13 @@
 import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { User } from 'src/users/entities/user.entity'
-import { AppModule } from 'src/app.module'
+import { User } from '../entities/user.entity'
+import { AppModule } from '../../app.module'
 import { DataSource, Repository } from 'typeorm'
 import request from 'supertest'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { UserRole } from '@core/utils/constant'
+import { UserRole } from '../../core/utils/constant'
 
 const USER_BASE_URL = '/users'
 

@@ -77,16 +77,39 @@ $ pnpm run start:prod
 # unit tests
 $ pnpm test:unit
 
-# e2e tests
+# e2e tests (all modules)
 $ pnpm test:e2e
 
-# specific e2e tests
-$ pnpm test:e2e:user-list    # User List APIs only
-$ pnpm test:e2e:user         # User CRUD APIs only  
-$ pnpm test:e2e:auth         # Auth APIs only
+# specific e2e tests by module
+$ pnpm test:e2e:users        # Users module (CRUD + List APIs)
+$ pnpm test:e2e:auth         # Auth module APIs
 
 # test coverage
 $ pnpm run test:cov
+```
+
+## Project Structure
+
+```
+src/
+├── auth/
+│   ├── __tests__/           # Auth module e2e tests
+│   │   └── auth.e2e-spec.ts
+│   ├── controllers/
+│   ├── services/
+│   └── ...
+├── users/
+│   ├── __tests__/           # Users module e2e tests
+│   │   ├── users.e2e-spec.ts
+│   │   └── user-list.e2e-spec.ts
+│   ├── controllers/
+│   ├── services/
+│   └── ...
+└── test/
+    └── shared/              # Shared test utilities
+        ├── utils/
+        ├── fixtures/
+        └── config/
 ```
 
 ## Stay in touch

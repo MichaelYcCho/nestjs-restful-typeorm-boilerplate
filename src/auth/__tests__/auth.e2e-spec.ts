@@ -1,12 +1,12 @@
 import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { User } from 'src/users/entities/user.entity'
-import { AppModule } from 'src/app.module'
+import { User } from '../../users/entities/user.entity'
+import { AppModule } from '../../app.module'
 import { DataSource, Repository } from 'typeorm'
 import request from 'supertest'
-import { JwtStorage } from '@auth/entities/jwt-storage.entity'
-import { bcryptHashing } from '@core/utils/hashing'
+import { JwtStorage } from '../entities/jwt-storage.entity'
+import { bcryptHashing } from '../../core/utils/hashing'
 
 const AUTH_BASE_URL = '/auth'
 

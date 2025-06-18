@@ -1,15 +1,15 @@
 import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { getRepositoryToken } from '@nestjs/typeorm'
-import { User } from 'src/users/entities/user.entity'
-import { AppModule } from 'src/app.module'
+import { User } from '../entities/user.entity'
+import { AppModule } from '../../app.module'
 import { DataSource, Repository } from 'typeorm'
 import request from 'supertest'
 import { JwtService } from '@nestjs/jwt'
 import { ConfigService } from '@nestjs/config'
-import { TEST_CONFIG, createTestDataSource } from './test-config'
-import { JwtStorage } from 'src/auth/entities/jwt-storage.entity'
-import { DatabaseTestHelper, TestLogger } from './utils/test-helpers'
+import { TEST_CONFIG, createTestDataSource } from '../../../test/shared/test-config'
+import { JwtStorage } from '../../auth/entities/jwt-storage.entity'
+import { DatabaseTestHelper, TestLogger } from '../../../test/shared/utils/test-helpers'
 
 const USER_BASE_URL = '/users'
 
@@ -176,10 +176,10 @@ describe('UsersController List APIs (e2e)', () => {
             it(
                 'should fail to get users without authentication',
                 async () => {
-                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}`).expect(401)
+                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}`).expect(403)
 
-                    expect(response.body).toHaveProperty('statusCode', 401)
-                    expect(response.body).toHaveProperty('message', 'Unauthorized')
+                    expect(response.body).toHaveProperty('statusCode', 403)
+                    expect(response.body).toHaveProperty('message', 'Forbidden resource')
 
                     TestLogger.success('Correctly failed without authentication')
                 },
@@ -192,9 +192,11 @@ describe('UsersController List APIs (e2e)', () => {
                     const response = await request(app.getHttpServer())
                         .get(`${USER_BASE_URL}`)
                         .set('Authorization', 'Bearer invalid_token')
-                        .expect(401)
+                        .expect(400)
 
-                    expect(response.body).toHaveProperty('statusCode', 401)
+                    expect(response.body).toHaveProperty('statusCode', 400)
+                    expect(response.body).toHaveProperty('errorCode', 200005) // INVALID_SIGNATURE
+                    expect(response.body).toHaveProperty('message', 'Invalid signature')
 
                     TestLogger.success('Correctly failed with invalid token')
                 },
@@ -284,10 +286,10 @@ describe('UsersController List APIs (e2e)', () => {
                 async () => {
                     const userId = createdUsers.first.id
 
-                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}/${userId}`).expect(401)
+                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}/${userId}`).expect(403)
 
-                    expect(response.body).toHaveProperty('statusCode', 401)
-                    expect(response.body).toHaveProperty('message', 'Unauthorized')
+                    expect(response.body).toHaveProperty('statusCode', 403)
+                    expect(response.body).toHaveProperty('message', 'Forbidden resource')
 
                     TestLogger.success('Correctly failed without authentication')
                 },
@@ -302,9 +304,11 @@ describe('UsersController List APIs (e2e)', () => {
                     const response = await request(app.getHttpServer())
                         .get(`${USER_BASE_URL}/${userId}`)
                         .set('Authorization', 'Bearer invalid_token')
-                        .expect(401)
+                        .expect(400)
 
-                    expect(response.body).toHaveProperty('statusCode', 401)
+                    expect(response.body).toHaveProperty('statusCode', 400)
+                    expect(response.body).toHaveProperty('errorCode', 200005) // INVALID_SIGNATURE
+                    expect(response.body).toHaveProperty('message', 'Invalid signature')
 
                     TestLogger.success('Correctly failed with invalid token')
                 },

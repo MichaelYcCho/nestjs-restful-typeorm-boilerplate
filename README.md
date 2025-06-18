@@ -80,6 +80,11 @@ $ pnpm test:unit
 # e2e tests
 $ pnpm test:e2e
 
+# specific e2e tests
+$ pnpm test:e2e:user-list    # User List APIs only
+$ pnpm test:e2e:user         # User CRUD APIs only  
+$ pnpm test:e2e:auth         # Auth APIs only
+
 # test coverage
 $ pnpm run test:cov
 ```

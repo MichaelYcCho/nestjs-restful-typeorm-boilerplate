@@ -25,6 +25,9 @@
         "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
         "test:unit": "cross-env NODE_ENV=test  jest --config ./jest-unit.config.js",
         "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --verbose",
+        "test:e2e:user-list": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testPathPattern=user-list.e2e-spec.ts --verbose",
+        "test:e2e:user": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testPathPattern=user.e2e-spec.ts --verbose",
+        "test:e2e:auth": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testPathPattern=auth.e2e-spec.ts --verbose",
         "g:r": "bash scripts/generate-resource.sh"
     },
     "dependencies": {

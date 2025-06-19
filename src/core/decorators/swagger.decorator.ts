@@ -1,4 +1,4 @@
-import { ErrorResponse } from '@core/dto/response.dto'
+import { ErrorResponse } from '@core/dto/base-error-response.dto'
 import { ApiResponse } from '@nestjs/swagger'
 
 export const ApiErrorResponse = (status: number, errors: any[]): MethodDecorator => {

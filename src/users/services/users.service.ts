@@ -4,7 +4,7 @@ import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
 
 import { ExceptionHandler } from '@core/errors/error.handler'
-import { BaseResponse } from '@core/dto/response.dto'
+
 import { DataSource, EntityManager } from 'typeorm'
 
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
@@ -14,6 +14,7 @@ import { createUserDto } from '@users/dto/create-user.dto'
 import { UsersRepository } from '@users/repository/user.repository'
 import { UserDto } from '@users/dto/user.dto'
 import { User } from '@users/entities/user.entity'
+import { BaseResponse } from '@core/dto/base-response.dto'
 
 @Injectable()
 export class UsersService {
@@ -46,7 +47,7 @@ export class UsersService {
             })
             await queryRunner.commitTransaction()
             this.logger.log(`[CreateUser] Success: ${user.email}`)
-            return { isSuccess: true, message: null }
+            return { message: 'success' }
         } catch (e) {
             await queryRunner.rollbackTransaction()
             if (e instanceof ExceptionHandler) {
@@ -80,7 +81,7 @@ export class UsersService {
         try {
             await this.usersRepository.deleteUserWithJwtStorage(user)
             this.logger.log(`[DeleteUser] Success: ${user.email}`)
-            return { isSuccess: true, message: null }
+            return { message: 'success' }
         } catch (e) {
             if (e instanceof ExceptionHandler) {
                 throw e

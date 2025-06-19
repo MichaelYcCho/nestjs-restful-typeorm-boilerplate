@@ -101,8 +101,7 @@ describe('UsersController List APIs (e2e)', () => {
                 const response = await createUser(app, userData).expect(201)
 
                 expect(response.body).toEqual({
-                    isSuccess: true,
-                    message: null,
+                    message: 'success',
                 })
 
                 // 생성된 사용자 정보 저장
@@ -328,8 +327,7 @@ describe('UsersController List APIs (e2e)', () => {
                     // 세 번째 사용자 삭제
                     const response = await deleteUser(app, createdUsers.third.token).expect(200)
                     expect(response.body).toEqual({
-                        isSuccess: true,
-                        message: null,
+                        message: 'success',
                     })
 
                     // 삭제 후 사용자 수 확인

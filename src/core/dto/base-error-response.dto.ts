@@ -1,21 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsString } from 'class-validator'
-
-export class BaseResponse {
-    @ApiProperty({
-        example: true,
-        description: 'Is Success',
-    })
-    @IsBoolean()
-    isSuccess: boolean
-
-    @ApiProperty({
-        example: 'error message',
-        description: 'Error Message',
-    })
-    @IsString()
-    message: string
-}
 
 export class ErrorResponse {
     @ApiProperty({ example: 400, description: 'HTTP Status Code' })

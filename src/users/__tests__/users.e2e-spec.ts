@@ -86,8 +86,7 @@ describe('UsersController (e2e) - Sequential Tests', () => {
             const response = await createUser(app, TEST_USERS.first).expect(201)
 
             expect(response.body).toEqual({
-                isSuccess: true,
-                message: null,
+                message: 'success',
             })
 
             // 생성된 사용자 ID 저장
@@ -152,8 +151,7 @@ describe('UsersController (e2e) - Sequential Tests', () => {
             const response = await createUser(app, TEST_USERS.second).expect(201)
 
             expect(response.body).toEqual({
-                isSuccess: true,
-                message: null,
+                message: 'success',
             })
 
             // 생성된 사용자 ID 저장
@@ -190,8 +188,7 @@ describe('UsersController (e2e) - Sequential Tests', () => {
             expect(response.status).toBe(200)
 
             expect(response.body).toEqual({
-                isSuccess: true,
-                message: null,
+                message: 'success',
             })
 
             // 삭제 확인 - 사용자가 더 이상 존재하지 않아야 함
@@ -211,8 +208,7 @@ describe('UsersController (e2e) - Sequential Tests', () => {
             const response = await deleteUser(app, authToken).expect(200)
 
             expect(response.body).toEqual({
-                isSuccess: true,
-                message: null,
+                message: 'success',
             })
 
             // 삭제 확인 - 사용자가 더 이상 존재하지 않아야 함

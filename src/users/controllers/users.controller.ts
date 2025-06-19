@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards, Version }
 import { UsersService } from '../services/users.service'
 
 import { plainToInstance } from 'class-transformer'
-import { BaseResponse } from '@core/dto/response.dto'
+
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
@@ -12,11 +12,46 @@ import { createUserDto } from '@users/dto/create-user.dto'
 import { UserDto } from '@users/dto/user.dto'
 import { updateUserDto } from '@users/dto/update-user.dto'
 import { User } from '@users/entities/user.entity'
+import { BaseResponse } from '@core/dto/base-response.dto'
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
     constructor(private readonly usersService: UsersService) {}
+
+    @UseGuards(JwtAuthGuard)
+    @Version('1')
+    @ApiOperation({ summary: 'GetAllUsers' })
+    @ApiResponse({
+        type: [UserDto],
+        status: 200,
+        description: 'Get All Users',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
+    @Get('')
+    async getUserList(): Promise<UserDto[]> {
+        const result = await this.usersService.getUserList()
+        return result.map((user) => plainToInstance(UserDto, user))
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Version('1')
+    @ApiOperation({ summary: 'GetUserById' })
+    @ApiResponse({
+        type: UserDto,
+        status: 200,
+        description: 'Get User Detail',
+    })
+    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
+    @Get('/:id')
+    async getUserById(@Param('id') id: string): Promise<UserDto> {
+        const userId = parseInt(id, 10)
+        if (isNaN(userId)) {
+            throw new Error('Invalid user ID')
+        }
+        const result = await this.usersService.getUserById(userId)
+        return plainToInstance(UserDto, result)
+    }
 
     @Version('1')
     @ApiOperation({ summary: 'CreateUser' })
@@ -63,39 +98,5 @@ export class UsersController {
         const result = await this.usersService.deleteUser(user)
         const response = plainToInstance(BaseResponse, result)
         return response
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Version('1')
-    @ApiOperation({ summary: 'GetAllUsers' })
-    @ApiResponse({
-        type: [UserDto],
-        status: 200,
-        description: 'Get All Users',
-    })
-    @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
-    @Get('')
-    async getUserList(): Promise<UserDto[]> {
-        const result = await this.usersService.getUserList()
-        return result.map((user) => plainToInstance(UserDto, user))
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Version('1')
-    @ApiOperation({ summary: 'GetUserById' })
-    @ApiResponse({
-        type: UserDto,
-        status: 200,
-        description: 'Get User Detail',
-    })
-    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
-    @Get('/:id')
-    async getUserById(@Param('id') id: string): Promise<UserDto> {
-        const userId = parseInt(id, 10)
-        if (isNaN(userId)) {
-            throw new Error('Invalid user ID')
-        }
-        const result = await this.usersService.getUserById(userId)
-        return plainToInstance(UserDto, result)
     }
 }

@@ -2,19 +2,16 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { bcryptHashing } from '@core/utils/hashing'
-
 import { ExceptionHandler } from '@core/errors/error.handler'
-
 import { DataSource, EntityManager } from 'typeorm'
-
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 import { LoggerHandler } from 'src/logger/logger.service'
 import { updateUserDto } from '@users/dto/update-user.dto'
 import { createUserDto } from '@users/dto/create-user.dto'
 import { UsersRepository } from '@users/repository/user.repository'
-import { UserDto } from '@users/dto/user.dto'
 import { User } from '@users/entities/user.entity'
 import { BaseResponse } from '@core/dto/base-response.dto'
+import { FilterUsersDto } from '@users/dto/filter-dto'
 
 @Injectable()
 export class UsersService {
@@ -25,6 +22,32 @@ export class UsersService {
         private dataSource: DataSource,
         private readonly logger: LoggerHandler,
     ) {}
+
+    async getUserList(filterDto: FilterUsersDto) {
+        try {
+            return await this.usersRepository.getUserList(filterDto)
+        } catch (e) {
+            console.error(`[GetAllUsers] Error: ${e.message}`)
+            throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
+        }
+    }
+
+    async getUserById(userId: number): Promise<User> {
+        try {
+            const user = await this.usersRepository.getUserByIdForDetail(userId)
+            if (!user) {
+                throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
+            }
+            return user
+        } catch (e) {
+            if (e instanceof ExceptionHandler) {
+                throw e
+            } else {
+                console.error(`[GetUserById] Error: ${e.message}`)
+                throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
+            }
+        }
+    }
 
     async createUser({ email, password, profileName }: createUserDto): Promise<BaseResponse> {
         const queryRunner = this.dataSource.createQueryRunner()
@@ -88,33 +111,6 @@ export class UsersService {
             } else {
                 console.error(`[DeleteUser] Error: ${e.message}`)
                 throw new ExceptionHandler(USERS_ERRORS.FAILED_DELETE_USER)
-            }
-        }
-    }
-
-    async getUserList(): Promise<User[]> {
-        try {
-            const users = await this.usersRepository.getUserList()
-            return users
-        } catch (e) {
-            console.error(`[GetAllUsers] Error: ${e.message}`)
-            throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
-        }
-    }
-
-    async getUserById(userId: number): Promise<User> {
-        try {
-            const user = await this.usersRepository.getUserByIdForDetail(userId)
-            if (!user) {
-                throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
-            }
-            return user
-        } catch (e) {
-            if (e instanceof ExceptionHandler) {
-                throw e
-            } else {
-                console.error(`[GetUserById] Error: ${e.message}`)
-                throw new ExceptionHandler(USERS_ERRORS.FAILED_GET_USER_PROFILE)
             }
         }
     }

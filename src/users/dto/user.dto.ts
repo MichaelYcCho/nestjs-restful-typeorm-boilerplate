@@ -1,8 +1,8 @@
-import { IsBoolean, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator'
+import { IsBoolean, IsEmail, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
 import { UserRole } from '@core/utils/constant'
 import { JwtStorageDto } from '@auth/dto/jwt-storage.dto'
-import { Expose } from 'class-transformer'
-import { ApiProperty } from '@nestjs/swagger'
+import { Expose, Type } from 'class-transformer'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UserDto {
     @Expose()

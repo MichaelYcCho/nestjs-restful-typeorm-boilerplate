@@ -4,6 +4,7 @@ import { DataSource, Repository } from 'typeorm'
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ExceptionHandler } from '@core/errors/error.handler'
+import { FilterUsersDto } from '@users/dto/filter-dto'
 
 @Injectable()
 export class UsersRepository extends Repository<User> {
@@ -39,11 +40,42 @@ export class UsersRepository extends Repository<User> {
         })
     }
 
-    async getUserList(): Promise<User[]> {
-        return this.find({
-            select: ['id', 'email', 'profileName', 'role', 'createdAt', 'updatedAt'],
-            order: { createdAt: 'DESC' },
-        })
+    async getUserList(filterDto: FilterUsersDto) {
+        const { pageNumber, pageSize, searchKeyword, role, isActive } = filterDto
+
+        const query = this.createQueryBuilder('users')
+            .select([
+                'users.id',
+                'users.email',
+                'users.profileName',
+                'users.role',
+                'users.createdAt',
+                'users.updatedAt',
+            ])
+            .where('1=1')
+            .skip((pageNumber - 1) * pageSize)
+            .take(pageSize)
+
+        if (searchKeyword) {
+            query.andWhere('(users.email ILIKE :searchKeyword OR users.profileName ILIKE :searchKeyword)', {
+                searchKeyword: `%${searchKeyword}%`,
+            })
+        }
+
+        if (role !== undefined) {
+            query.andWhere('users.role = :role', { role })
+        }
+
+        if (isActive !== undefined) {
+            query.andWhere('users.is_active = :isActive', { isActive })
+        }
+
+        query.orderBy('users.created_at', 'DESC')
+        query.addOrderBy('users.id', 'DESC')
+
+        const [users, count] = await query.getManyAndCount()
+
+        return { users, count }
     }
 
     async getUserByIdForDetail(userId: number): Promise<User | null> {

@@ -43,37 +43,54 @@ export class UsersRepository extends Repository<User> {
     async getUserList(filterDto: FilterUsersDto) {
         const { pageNumber, pageSize, searchKeyword, role, isActive } = filterDto
 
-        const query = this.createQueryBuilder('users')
+        const whereClause: any = {}
+
+        if (role !== undefined) {
+            whereClause.role = role
+        }
+
+        if (isActive !== undefined) {
+            whereClause.isActive = isActive
+        }
+
+        let queryBuilder = this.createQueryBuilder('users')
             .select([
                 'users.id',
                 'users.email',
                 'users.profileName',
                 'users.role',
+                'users.isActive',
                 'users.createdAt',
                 'users.updatedAt',
             ])
-            .where('1=1')
-            .skip((pageNumber - 1) * pageSize)
-            .take(pageSize)
+            .skip(((Number(pageNumber) || 1) - 1) * (Number(pageSize) || 10))
+            .take(Number(pageSize) || 10)
+            .orderBy('users.createdAt', 'DESC')
+            .addOrderBy('users.id', 'DESC')
+
+        if (Object.keys(whereClause).length > 0) {
+            queryBuilder = queryBuilder.where(whereClause)
+        }
 
         if (searchKeyword) {
-            query.andWhere('(users.email ILIKE :searchKeyword OR users.profileName ILIKE :searchKeyword)', {
-                searchKeyword: `%${searchKeyword}%`,
-            })
+            if (Object.keys(whereClause).length > 0) {
+                queryBuilder = queryBuilder.andWhere(
+                    '(users.email ILIKE :searchKeyword OR users.profileName ILIKE :searchKeyword)',
+                    {
+                        searchKeyword: `%${searchKeyword}%`,
+                    },
+                )
+            } else {
+                queryBuilder = queryBuilder.where(
+                    '(users.email ILIKE :searchKeyword OR users.profileName ILIKE :searchKeyword)',
+                    {
+                        searchKeyword: `%${searchKeyword}%`,
+                    },
+                )
+            }
         }
 
-        if (role !== undefined) {
-            query.andWhere('users.role = :role', { role })
-        }
-
-        if (isActive !== undefined) {
-            query.andWhere('users.is_active = :isActive', { isActive })
-        }
-
-        query.orderBy('users.created_at', 'DESC')
-        query.addOrderBy('users.id', 'DESC')
-
-        const [users, count] = await query.getManyAndCount()
+        const [users, count] = await queryBuilder.getManyAndCount()
 
         return { users, count }
     }

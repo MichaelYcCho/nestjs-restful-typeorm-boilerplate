@@ -1,4 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, Version } from '@nestjs/common'
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Patch,
+    Post,
+    Query,
+    UseGuards,
+    Version,
+    ValidationPipe,
+} from '@nestjs/common'
 import { UsersService } from '../services/users.service'
 
 import { plainToInstance } from 'class-transformer'
@@ -30,7 +42,9 @@ export class UsersController {
     })
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
     @Get('')
-    async getUserList(@Query() filterDto: FilterUsersDto): Promise<BasePaginatedResponse<UserDto[]>> {
+    async getUserList(
+        @Query(new ValidationPipe({ transform: true })) filterDto: FilterUsersDto,
+    ): Promise<BasePaginatedResponse<UserDto[]>> {
         const { users, count } = await this.usersService.getUserList(filterDto)
 
         const usersDto = users.map((user) =>

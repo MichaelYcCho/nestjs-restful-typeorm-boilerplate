@@ -17,5 +17,7 @@
     "testMatch": [
         "<rootDir>/src/**/__tests__/**/*.e2e-spec.ts"
     ],
-    "maxWorkers": 1
+    "maxWorkers": 1,
+    "forceExit": true,
+    "detectOpenHandles": true
 }

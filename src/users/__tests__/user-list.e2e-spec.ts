@@ -16,7 +16,7 @@ const USER_BASE_URL = '/users'
 
 // HTTP 요청 헬퍼 함수
 const createUser = (app: INestApplication, userData: any) => {
-    return request(app.getHttpServer()).post(`${USER_BASE_URL}/create`).send(userData)
+    return request(app.getHttpServer()).post(`${USER_BASE_URL}`).send(userData)
 }
 
 const getUserList = (app: INestApplication, token: string, queryParams?: string) => {
@@ -29,7 +29,7 @@ const getUserById = (app: INestApplication, userId: number, token: string) => {
 }
 
 const deleteUser = (app: INestApplication, token: string) => {
-    return request(app.getHttpServer()).delete(`${USER_BASE_URL}/delete`).set('Authorization', `Bearer ${token}`)
+    return request(app.getHttpServer()).delete(`${USER_BASE_URL}`).set('Authorization', `Bearer ${token}`)
 }
 
 describe('UsersController List APIs (e2e)', () => {

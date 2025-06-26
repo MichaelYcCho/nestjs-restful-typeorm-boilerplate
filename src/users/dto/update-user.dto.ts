@@ -1,5 +1,6 @@
+import { UserRole } from '@core/utils/constant'
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNumber, IsString } from 'class-validator'
+import { IsEnum, IsNumber, IsString } from 'class-validator'
 
 export class updateUserDto {
     @ApiProperty({
@@ -17,9 +18,10 @@ export class updateUserDto {
     profileName: string
 
     @ApiProperty({
-        example: 1,
+        example: UserRole.ADMIN,
         description: 'User Role',
+        enum: UserRole,
     })
-    @IsNumber()
-    role: number
+    @IsEnum(UserRole)
+    role: UserRole
 }

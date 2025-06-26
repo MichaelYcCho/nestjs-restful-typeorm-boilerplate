@@ -41,7 +41,7 @@ export class UsersController {
         description: 'Get All Users',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
-    @Get('')
+    @Get()
     async getUserList(
         @Query(new ValidationPipe({ transform: true })) filterDto: FilterUsersDto,
     ): Promise<BasePaginatedResponse<UserDto[]>> {
@@ -71,7 +71,7 @@ export class UsersController {
         description: 'Get User Detail',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
-    @Get('/:id')
+    @Get(':id')
     async getUserById(@Param('id') id: string): Promise<BaseDataResponse<UserDto>> {
         const userId = parseInt(id, 10)
         if (isNaN(userId)) {
@@ -89,7 +89,7 @@ export class UsersController {
         description: 'Create User',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
-    @Post('/create')
+    @Post()
     async createUser(@Body() data: createUserDto): Promise<BaseIdResponse> {
         const result = await this.usersService.createUser(data)
         const response = plainToInstance(BaseIdResponse, result)
@@ -105,7 +105,7 @@ export class UsersController {
         description: 'Update User',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
-    @Patch('/update')
+    @Patch('')
     async updateUser(@getUser() user, @Body() data: updateUserDto): Promise<BaseDataResponse<UserDto>> {
         const result = await this.usersService.updateUser(user, data)
         const response = plainToInstance(BaseDataResponse<UserDto>, result)
@@ -121,7 +121,7 @@ export class UsersController {
         description: 'Delete User',
     })
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_DELETE_USER])
-    @Delete('/delete')
+    @Delete()
     async deleteUser(@getUser() user: User): Promise<BaseResponse> {
         const result = await this.usersService.deleteUser(user)
         const response = plainToInstance(BaseResponse, result)

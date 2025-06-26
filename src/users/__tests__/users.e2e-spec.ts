@@ -27,18 +27,15 @@ const TEST_USERS = {
 
 // HTTP 요청 헬퍼 함수
 const createUser = (app: INestApplication, userData: any) => {
-    return request(app.getHttpServer()).post(`${USER_BASE_URL}/create`).send(userData)
+    return request(app.getHttpServer()).post(`${USER_BASE_URL}`).send(userData)
 }
 
 const updateUser = (app: INestApplication, userData: any, token: string) => {
-    return request(app.getHttpServer())
-        .patch(`${USER_BASE_URL}/update`)
-        .set('Authorization', `Bearer ${token}`)
-        .send(userData)
+    return request(app.getHttpServer()).patch(`${USER_BASE_URL}`).set('Authorization', `Bearer ${token}`).send(userData)
 }
 
 const deleteUser = (app: INestApplication, token: string) => {
-    return request(app.getHttpServer()).delete(`${USER_BASE_URL}/delete`).set('Authorization', `Bearer ${token}`)
+    return request(app.getHttpServer()).delete(`${USER_BASE_URL}`).set('Authorization', `Bearer ${token}`)
 }
 
 describe('UsersController (e2e) - Sequential Tests', () => {

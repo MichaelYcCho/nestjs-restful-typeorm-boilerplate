@@ -5,7 +5,7 @@ import { JwtStorage } from '@auth/entities/jwt-storage.entity'
 import { CoreEntity } from '@core/entities/base.entity'
 
 @Index('email', ['email'], { unique: true })
-@Entity({ schema: DB_SCHEMA, name: `${USER_PREFIX}_users` })
+@Entity({ schema: DB_SCHEMA, name: `users` })
 export class User extends CoreEntity {
     @IsEmail()
     @Column('varchar', { name: 'email', length: 50, unique: true })
@@ -19,14 +19,14 @@ export class User extends CoreEntity {
     @Column('varchar', { name: 'profile_name', length: 30 })
     profileName: string
 
-    @Column({ type: 'enum', enum: UserRole, default: UserRole.COMMON })
-    @IsEnum(UserRole)
+    @Column({ type: 'varchar', default: UserRole.COMMON })
+    @IsString()
     role: UserRole
 
     @IsBoolean()
     @Column('boolean', { name: 'is_active', default: true })
     isActive: boolean
 
-    // @OneToOne(() => JwtStorage, (jwtStorage) => jwtStorage.user)
-    // jwtStorage: Relation<JwtStorage>
+    @OneToOne(() => JwtStorage, (jwtStorage) => jwtStorage.user)
+    jwtStorage: Relation<JwtStorage>
 }

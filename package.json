@@ -13,7 +13,7 @@
         "start:dev": "cross-env NODE_ENV=dev nest build --webpack --webpackPath webpack-hmr.config.js --watch",
         "start:debug": "nest start --debug --watch",
         "start:prod": "node dist/main",
-        "db:g": "read -p \"Migration Name(No Blank) : \" file_name && npm run typeorm -- migration:generate src/database/migrations/$file_name -d ./src/config/datasource.ts",
+        "db:g": "read -p \"Migration Name(No Blank) : \" file_name && npm run typeorm -- migration:generate src/database/migrations/$file_name -d ./src/config/datasource.ts && npm run format-migrations",
         "db:m": "npm run typeorm -- migration:run -d src/config/datasource.ts",
         "db:r": "npm run typeorm -- migration:revert -d src/config/datasource.ts",
         "docker:typeorm": "ts-node /app/boilerplate/node_modules/typeorm/cli.js",
@@ -27,6 +27,7 @@
         "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --verbose",
         "test:e2e:users": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testPathPattern=src/users/__tests__ --verbose",
         "test:e2e:auth": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testPathPattern=src/auth/__tests__ --verbose",
+        "format-migrations": "ts-node -r tsconfig-paths/register src/core/utils/cli/format-migrations.ts",
         "g:r": "bash scripts/generate-resource.sh"
     },
     "dependencies": {

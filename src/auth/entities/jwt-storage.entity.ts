@@ -1,15 +1,11 @@
-import { TimeStamp } from '@core/entities/time-stamp.entity'
+import { CoreEntity } from '@core/entities/base.entity'
 import { JWT_PREFIX } from '@core/utils/constant'
 import { User } from '@users/entities/user.entity'
 import { IsNumber, IsString } from 'class-validator'
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm'
 
 @Entity({ schema: 'public', name: `${JWT_PREFIX}_storage` })
-export class JwtStorage extends TimeStamp {
-    @IsNumber()
-    @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-    id: number
-
+export class JwtStorage extends CoreEntity {
     @IsString()
     @Column('varchar', { name: 'refresh_token', length: 255, nullable: true })
     refreshToken: string

@@ -1,16 +1,12 @@
-import { IsBoolean, IsEmail, IsEnum, IsNumber, IsString } from 'class-validator'
-import { Column, Entity, Index, OneToOne, PrimaryGeneratedColumn, Relation } from 'typeorm'
+import { IsBoolean, IsEmail, IsEnum, IsString } from 'class-validator'
+import { Column, Entity, Index, OneToOne, Relation } from 'typeorm'
 import { DB_SCHEMA, USER_PREFIX, UserRole } from '@core/utils/constant'
-import { TimeStamp } from '@core/entities/time-stamp.entity'
 import { JwtStorage } from '@auth/entities/jwt-storage.entity'
+import { CoreEntity } from '@core/entities/base.entity'
 
 @Index('email', ['email'], { unique: true })
-@Entity({ schema: DB_SCHEMA, name: `${USER_PREFIX}_user` })
-export class User extends TimeStamp {
-    @IsNumber()
-    @PrimaryGeneratedColumn({ type: 'int', name: 'id' })
-    id: number
-
+@Entity({ schema: DB_SCHEMA, name: `${USER_PREFIX}_users` })
+export class User extends CoreEntity {
     @IsEmail()
     @Column('varchar', { name: 'email', length: 50, unique: true })
     email: string
@@ -31,6 +27,6 @@ export class User extends TimeStamp {
     @Column('boolean', { name: 'is_active', default: true })
     isActive: boolean
 
-    @OneToOne(() => JwtStorage, (jwtStorage) => jwtStorage.user)
-    jwtStorage: Relation<JwtStorage>
+    // @OneToOne(() => JwtStorage, (jwtStorage) => jwtStorage.user)
+    // jwtStorage: Relation<JwtStorage>
 }

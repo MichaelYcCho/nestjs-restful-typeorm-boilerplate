@@ -16,7 +16,7 @@ export function config(): DataSourceOptions {
         database: configService.get<string>('DB_NAME'),
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
-        entities: [User, JwtStorage],
+        entities: [User],
         migrations: ['./src/database/migrations/**/*{.ts,.js}'],
         migrationsTableName: 'migration_type_orm',
         logging: false,

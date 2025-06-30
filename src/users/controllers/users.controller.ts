@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common'
 import { UsersService } from '../services/users.service'
 import { plainToInstance } from 'class-transformer'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt.access.guard'
@@ -34,6 +34,7 @@ export class UsersController {
     constructor(private readonly usersService: UsersService) {}
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @Version('1')
     @ApiOperation({ summary: 'GetAllUsers' })
     @PaginatedResponse(UserDto, 'Paginated Response')
@@ -60,6 +61,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @Version('1')
     @ApiOperation({ summary: 'GetUserById' })
     @DataResponse(UserDto, 'Get User Detail')
@@ -88,6 +90,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @Version('1')
     @ApiOperation({ summary: 'UpdateUser' })
     @DataResponse(UserDto, 'Update User')
@@ -100,6 +103,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
     @Version('1')
     @ApiOperation({ summary: 'DeleteUser' })
     @DataResponse(UserDto, 'Delete User')

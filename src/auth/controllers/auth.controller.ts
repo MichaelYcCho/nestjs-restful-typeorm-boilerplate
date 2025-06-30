@@ -56,7 +56,7 @@ export class AuthController {
 
     @UseGuards(JwtAuthGuard)
     @Version('1')
-    @ApiBearerAuth()
+    @ApiBearerAuth('JWT-auth')
     @ApiOperation({ summary: 'Sign Out' })
     @ApiResponse({
         type: BaseResponse,

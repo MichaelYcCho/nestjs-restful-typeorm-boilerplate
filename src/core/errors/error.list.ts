@@ -23,6 +23,14 @@ export const AUTH_ERRORS = {
         errorCode: 200006,
         message: 'Failed authenticate',
     },
+    MISSING_AUTHORIZATION_HEADER: {
+        errorCode: 200007,
+        message: 'Authorization header is missing. Please provide Bearer token.',
+    },
+    MISSING_JWT_TOKEN: {
+        errorCode: 200008,
+        message: 'JWT token is missing. Please provide valid Bearer token.',
+    },
 }
 
 export const USERS_ERRORS = {

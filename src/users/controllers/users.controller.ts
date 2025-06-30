@@ -12,10 +12,8 @@ import {
     ValidationPipe,
 } from '@nestjs/common'
 import { UsersService } from '../services/users.service'
-
 import { plainToInstance } from 'class-transformer'
-
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
 import { JwtAuthGuard } from '@auth/guards/jwt.access.guard'
@@ -27,6 +25,8 @@ import { User } from '@users/entities/user.entity'
 import { BaseDataResponse, BaseIdResponse, BasePaginatedResponse, BaseResponse } from '@core/dto/base-response.dto'
 import { FilterUsersDto } from '@users/dto/filter-dto'
 import { PaginatedResponse } from '@core/decorators/response/paginated-response.decorator'
+import { DataResponse } from '@core/decorators/response/data-response.decorator'
+import { ExceptionHandler } from '@core/errors/error.handler'
 
 @ApiTags('Users')
 @Controller('users')
@@ -62,29 +62,23 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Version('1')
     @ApiOperation({ summary: 'GetUserById' })
-    @ApiResponse({
-        type: BaseDataResponse<UserDto>,
-        status: 200,
-        description: 'Get User Detail',
-    })
+    @DataResponse(UserDto, 'Get User Detail')
     @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
     @Get(':id')
     async getUserById(@Param('id') id: string): Promise<BaseDataResponse<UserDto>> {
+        // id param validation, 10진수
         const userId = parseInt(id, 10)
         if (isNaN(userId)) {
-            throw new Error('Invalid user ID')
+            throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
         }
         const result = await this.usersService.getUserById(userId)
-        return plainToInstance(BaseDataResponse<UserDto>, result)
+        const response = plainToInstance(BaseDataResponse<UserDto>, result)
+        return response
     }
 
     @Version('1')
     @ApiOperation({ summary: 'CreateUser' })
-    @ApiResponse({
-        type: BaseIdResponse,
-        status: 201,
-        description: 'Create User',
-    })
+    @DataResponse(UserDto, 'Create User', 201)
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
     @Post()
     async createUser(@Body() data: createUserDto): Promise<BaseIdResponse> {
@@ -96,11 +90,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Version('1')
     @ApiOperation({ summary: 'UpdateUser' })
-    @ApiResponse({
-        type: BaseDataResponse<UserDto>,
-        status: 200,
-        description: 'Update User',
-    })
+    @DataResponse(UserDto, 'Update User')
     @ApiErrorResponse(400, [USERS_ERRORS.USER_EMAIL_ALREADY_EXIST, USERS_ERRORS.FAILED_CREATE_USER])
     @Patch('')
     async updateUser(@getUser() user, @Body() data: updateUserDto): Promise<BaseDataResponse<UserDto>> {
@@ -112,11 +102,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Version('1')
     @ApiOperation({ summary: 'DeleteUser' })
-    @ApiResponse({
-        type: BaseResponse,
-        status: 200,
-        description: 'Delete User',
-    })
+    @DataResponse(UserDto, 'Delete User')
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_DELETE_USER])
     @Delete()
     async deleteUser(@getUser() user: User): Promise<BaseResponse> {

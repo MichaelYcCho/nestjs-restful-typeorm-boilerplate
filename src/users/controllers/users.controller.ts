@@ -66,9 +66,9 @@ export class UsersController {
     @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER, USERS_ERRORS.FAILED_GET_USER_PROFILE])
     @Get(':id')
     async getUserById(@Param('id') id: string): Promise<BaseDataResponse<UserDto>> {
-        // id param validation, 10진수
-        const userId = parseInt(id, 10)
-        if (isNaN(userId)) {
+        // id param validation - 정수이고 양수인지 확인
+        const userId = Number(id)
+        if (!Number.isInteger(userId) || userId <= 0) {
             throw new ExceptionHandler(USERS_ERRORS.NOT_EXIST_USER)
         }
         const result = await this.usersService.getUserById(userId)

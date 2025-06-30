@@ -6,32 +6,32 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UserDto {
     @Expose()
-    @ApiProperty({ description: 'ID' })
+    @ApiProperty({ description: 'ID', example: 1 })
     @IsNumber()
     id: number
 
     @Expose()
-    @ApiProperty({ description: 'Email' })
+    @ApiProperty({ description: 'Email', example: 'test@test.com' })
     @IsEmail()
     email: string
 
     @Expose()
-    @ApiProperty({ description: 'Password' })
+    @ApiProperty({ description: 'Password', example: '123456' })
     @IsString()
     password: string
 
     @Expose()
-    @ApiProperty({ description: 'Profile Name' })
+    @ApiProperty({ description: 'Profile Name', example: 'test' })
     @IsString()
     profileName: string
 
     @Expose()
-    @ApiProperty({ description: 'Role' })
+    @ApiProperty({ description: 'Role', example: UserRole.ADMIN })
     @IsEnum(UserRole)
     role: UserRole
 
     @Expose()
-    @ApiProperty({ description: 'Is Active' })
+    @ApiProperty({ description: 'Is Active', example: true })
     @IsBoolean()
     isActive: boolean
 

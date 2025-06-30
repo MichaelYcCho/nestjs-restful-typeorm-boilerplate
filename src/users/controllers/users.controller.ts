@@ -26,6 +26,7 @@ import { updateUserDto } from '@users/dto/update-user.dto'
 import { User } from '@users/entities/user.entity'
 import { BaseDataResponse, BaseIdResponse, BasePaginatedResponse, BaseResponse } from '@core/dto/base-response.dto'
 import { FilterUsersDto } from '@users/dto/filter-dto'
+import { PaginatedResponse } from '@core/decorators/response/paginated-response.decorator'
 
 @ApiTags('Users')
 @Controller('users')
@@ -35,11 +36,7 @@ export class UsersController {
     @UseGuards(JwtAuthGuard)
     @Version('1')
     @ApiOperation({ summary: 'GetAllUsers' })
-    @ApiResponse({
-        type: BasePaginatedResponse<UserDto>,
-        status: 200,
-        description: 'Get All Users',
-    })
+    @PaginatedResponse(UserDto, 'Paginated Response')
     @ApiErrorResponse(400, [USERS_ERRORS.FAILED_GET_USER_PROFILE])
     @Get()
     async getUserList(

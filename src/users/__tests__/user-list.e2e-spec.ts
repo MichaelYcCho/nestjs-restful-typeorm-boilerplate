@@ -208,10 +208,14 @@ describe('UsersController List APIs (e2e)', () => {
             it(
                 'should fail to get users without authentication',
                 async () => {
-                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}`).expect(403)
+                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}`).expect(400)
 
-                    expect(response.body).toHaveProperty('statusCode', 403)
-                    expect(response.body).toHaveProperty('message', 'Forbidden resource')
+                    expect(response.body).toHaveProperty('statusCode', 400)
+                    expect(response.body).toHaveProperty('errorCode', 200007) // MISSING_AUTHORIZATION_HEADER
+                    expect(response.body).toHaveProperty(
+                        'message',
+                        'Authorization header is missing. Please provide Bearer token.',
+                    )
 
                     TestLogger.success('Correctly failed without authentication')
                 },
@@ -364,7 +368,11 @@ describe('UsersController List APIs (e2e)', () => {
                     const response = await request(app.getHttpServer())
                         .get(`${USER_BASE_URL}/${invalidId}`)
                         .set('Authorization', `Bearer ${token}`)
-                        .expect(500) // Invalid user ID 에러
+                        .expect(400) // Invalid user ID 에러
+
+                    expect(response.body).toHaveProperty('statusCode', 400)
+                    expect(response.body).toHaveProperty('errorCode', 100001) // NOT_EXIST_USER 에러 코드
+                    expect(response.body).toHaveProperty('message', 'Can not find user')
 
                     TestLogger.success('Correctly failed with invalid ID format')
                 },
@@ -376,10 +384,14 @@ describe('UsersController List APIs (e2e)', () => {
                 async () => {
                     const userId = createdUsers.first.id
 
-                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}/${userId}`).expect(403)
+                    const response = await request(app.getHttpServer()).get(`${USER_BASE_URL}/${userId}`).expect(400)
 
-                    expect(response.body).toHaveProperty('statusCode', 403)
-                    expect(response.body).toHaveProperty('message', 'Forbidden resource')
+                    expect(response.body).toHaveProperty('statusCode', 400)
+                    expect(response.body).toHaveProperty('errorCode', 200007) // MISSING_AUTHORIZATION_HEADER
+                    expect(response.body).toHaveProperty(
+                        'message',
+                        'Authorization header is missing. Please provide Bearer token.',
+                    )
 
                     TestLogger.success('Correctly failed without authentication')
                 },

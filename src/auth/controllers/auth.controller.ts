@@ -1,9 +1,10 @@
 import { Controller, Post, Version, Body, ValidationPipe, UseGuards, Req, HttpCode, Delete } from '@nestjs/common'
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { plainToInstance } from 'class-transformer'
 import { ApiErrorResponse } from '@core/decorators/swagger.decorator'
 import { AUTH_ERRORS, USERS_ERRORS } from '@core/errors/error.list'
 import { ExceptionHandler } from '@core/errors/error.handler'
+import { DataResponse } from '@core/decorators/response/data-response.decorator'
 
 import { JwtAuthGuard } from '../guards/jwt.access.guard'
 import { AuthService } from '../services/auth.service'
@@ -15,14 +16,10 @@ import { BaseResponse } from '@core/dto/base-response.dto'
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @ApiResponse({
-        type: TokenResponse,
-        status: 200,
-        description: 'success',
-    })
-    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
     @Version('1')
     @ApiOperation({ summary: 'JWT Login' })
+    @DataResponse(TokenResponse, 'Login Success')
+    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
     @HttpCode(200)
     @Post('sign-in')
     async signIn(@Body(ValidationPipe) authInfoRequest: AuthInfoRequest): Promise<TokenResponse> {
@@ -33,15 +30,11 @@ export class AuthController {
         return response
     }
 
-    @ApiResponse({
-        type: AccessTokenResponse,
-        status: 200,
-        description: 'success',
-    })
     @Version('1')
+    @ApiOperation({ summary: 'JWT Access Token Reissue' })
+    @DataResponse(AccessTokenResponse, 'Token Reissue Success')
     @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
     @ApiErrorResponse(401, [AUTH_ERRORS.INVALID_REFRESH_TOKEN])
-    @ApiOperation({ summary: 'JWT Access Token Reissue, with Refresh Token' })
     @HttpCode(200)
     @Post('reissue')
     async reissue(@Body() refreshTokenRequest: RefreshTokenRequest): Promise<AccessTokenResponse> {
@@ -55,14 +48,10 @@ export class AuthController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Version('1')
     @ApiBearerAuth('JWT-auth')
+    @Version('1')
     @ApiOperation({ summary: 'Sign Out' })
-    @ApiResponse({
-        type: BaseResponse,
-        status: 200,
-        description: 'success',
-    })
+    @DataResponse(BaseResponse, 'Logout Success')
     @Delete('sign-out')
     async logout(@Req() req: any): Promise<BaseResponse> {
         const user = req.user
@@ -71,14 +60,10 @@ export class AuthController {
         return response
     }
 
-    @ApiResponse({
-        type: TokenResponse,
-        status: 200,
-        description: 'success',
-    })
-    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
     @Version('1')
-    @ApiOperation({ summary: 'JWT Login(Redis Ver)' })
+    @ApiOperation({ summary: 'JWT Login (Redis Version)' })
+    @DataResponse(TokenResponse, 'Redis Login Success')
+    @ApiErrorResponse(400, [USERS_ERRORS.NOT_EXIST_USER])
     @HttpCode(200)
     @Post('redis-auth')
     async redisTest(@Body(ValidationPipe) authInfoRequest: AuthInfoRequest): Promise<TokenResponse> {

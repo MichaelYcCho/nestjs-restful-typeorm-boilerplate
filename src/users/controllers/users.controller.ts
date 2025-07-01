@@ -11,7 +11,7 @@ import {
     Version,
     ValidationPipe,
 } from '@nestjs/common'
-import { UsersService } from '../services/users.service'
+
 import { plainToInstance } from 'class-transformer'
 import { ApiOperation, ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { USERS_ERRORS } from '@core/errors/error.list'
@@ -27,6 +27,7 @@ import { FilterUsersDto } from '@users/dto/filter-dto'
 import { PaginatedResponse } from '@core/decorators/response/paginated-response.decorator'
 import { DataResponse } from '@core/decorators/response/data-response.decorator'
 import { ExceptionHandler } from '@core/errors/error.handler'
+import { UsersService } from '@users/services/users.service'
 
 @ApiTags('Users')
 @Controller('users')

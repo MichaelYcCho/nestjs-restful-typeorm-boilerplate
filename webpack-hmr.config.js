@@ -15,12 +15,20 @@ module.exports = function (options, webpack) {
       ...options.plugins,
       new webpack.HotModuleReplacementPlugin(),
       new webpack.WatchIgnorePlugin({
-        paths: [/\.js$/, /\.d\.ts$/],
+        paths: [/\.js$/, /\.d\.ts$/, /node_modules/],
       }),
       new RunScriptWebpackPlugin({
         name: options.output.filename,
-        autoRestart: false,
+        autoRestart: true,
+        signal: false,
+        keyboard: true,
+        args: ['--color'],
       }),
     ],
+    watchOptions: {
+      ignored: /node_modules/,
+      aggregateTimeout: 300,
+      poll: false,
+    },
   };
 };

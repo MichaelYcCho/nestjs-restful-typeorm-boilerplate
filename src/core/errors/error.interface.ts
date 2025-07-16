@@ -5,3 +5,8 @@ export interface ErrorInterface {
     target?: any
     timestamp?: string
 }
+
+export interface DynamicErrorOptions {
+    customMessage?: string
+    includeOriginalMessage?: boolean
+}

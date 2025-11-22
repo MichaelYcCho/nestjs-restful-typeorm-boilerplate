@@ -30,7 +30,7 @@ export class ExceptionHandler extends HttpException {
 
         const response = {
             statusCode: error instanceof Error ? HttpStatus.BAD_REQUEST : (error.status || HttpStatus.BAD_REQUEST),
-            errorCode: error instanceof Error ? 999999 : (error.errorCode || 999999),
+            errorCode: error instanceof Error ? 'ERR_99999' : (error.errorCode || 'ERR_99999'),
             message: finalMessage,
             target: error instanceof Error ? undefined : error.target,
             timestamp: new Date().toISOString(),

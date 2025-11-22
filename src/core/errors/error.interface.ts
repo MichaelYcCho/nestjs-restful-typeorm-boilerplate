@@ -1,8 +1,8 @@
 export interface ErrorInterface {
     status?: number
-    errorCode: number
+    errorCode: string
     message: string
-    target?: any
+    target?: string | Record<string, unknown>
     timestamp?: string
 }
 
